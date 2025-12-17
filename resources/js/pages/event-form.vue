@@ -65,7 +65,7 @@ const submit = () => {
             hospital="Hospital Municipal Albert Schweitzer"
         />
 
-        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow p-4 space-y-6">
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow p-4 space-y-6 mt-2">
 
             <h1 class="text-xl font-bold text-center">Solicitação de Eventos – HMAS</h1>
 

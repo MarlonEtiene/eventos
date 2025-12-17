@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3'
 import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue';
+import InputError from "@/components/InputError.vue";
 
 const form = useForm({
     email: '',
@@ -24,7 +25,7 @@ const submit = () => {
         />
 
         <!-- Card de login -->
-        <div class="flex-1 flex items-center justify-center px-4">
+        <div class="flex-1 flex items-center justify-center px-4 mt-2">
             <div class="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6 space-y-6">
 
                 <h1 class="text-center text-lg font-semibold text-slate-700">
@@ -39,6 +40,7 @@ const submit = () => {
                         class="input"
                         autocomplete="username"
                     />
+                    <InputError class="mt-2" :message="form.errors.email" />
 
                     <input
                         v-model="form.password"
@@ -47,6 +49,7 @@ const submit = () => {
                         class="input"
                         autocomplete="current-password"
                     />
+                    <InputError class="mt-2" :message="form.errors.password" />
 
                     <label class="flex items-center gap-2 text-sm text-slate-600">
                         <input type="checkbox" v-model="form.remember" />
@@ -72,7 +75,7 @@ const submit = () => {
 
         <!-- Rodapé -->
         <div class="text-center py-4">
-            <span class="text-xs font-semibold text-sky-800 tracking-wide">e-Same</span>
+            <span class="text-xs font-semibold text-sky-800 tracking-wide">e-Eventos</span>
         </div>
 
     </div>

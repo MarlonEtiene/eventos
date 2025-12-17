@@ -1,19 +1,26 @@
-import prettier from 'eslint-config-prettier/flat';
-import vue from 'eslint-plugin-vue';
+import vue from 'eslint-plugin-vue'
+import tsParser from '@typescript-eslint/parser'
+import tsPlugin from '@typescript-eslint/eslint-plugin'
 
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
-
-export default defineConfigWithVueTs(
-    vue.configs['flat/essential'],
-    vueTsConfigs.recommended,
+export default [
     {
-        ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'tailwind.config.js', 'resources/js/components/ui/*'],
-    },
-    {
+        files: ['**/*.vue'],
+        languageOptions: {
+            parser: vue.parser,
+            parserOptions: {
+                parser: tsParser,
+                ecmaVersion: 'latest',
+                sourceType: 'module',
+            },
+        },
+        plugins: {
+            vue,
+            '@typescript-eslint': tsPlugin,
+        },
         rules: {
             'vue/multi-word-component-names': 'off',
-            '@typescript-eslint/no-explicit-any': 'off',
+            'vue/no-unused-vars': 'error',
+            '@typescript-eslint/no-unused-vars': 'error',
         },
     },
-    prettier,
-);
+]
