@@ -15,6 +15,11 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
+        "laravellegends/pt-br-validator": "^12.2",
+        "maatwebsite/excel": "^3.1",
+        "owen-it/laravel-auditing": "^14.0",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "spatie/laravel-permission": "^6.24",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

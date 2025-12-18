@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MagicLinkController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,10 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/requester/login/{token}', [MagicLinkController::class, 'authenticate'])
+    ->name('applicant.magic-login');
+Route::resource('/magic-link', MagicLinkController::class);
+
 Route::get('/form/event', function () {
     return Inertia::render('event-form');
 });
@@ -21,6 +26,12 @@ Route::get('/form/event', function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware(['auth', 'role:applicant'])
+    ->get('/applicant/dashboard', function () {
+        return ['Dashboard Solicitante'];
+    })
+    ->name('applicant.dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

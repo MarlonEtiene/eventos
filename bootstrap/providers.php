@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Mail\MailServiceProvider;
+
 return [
     App\Providers\AppServiceProvider::class,
-    App\Providers\FortifyServiceProvider::class,
+    MailServiceProvider::class,
 ];
