@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Applicant\DashboardController;
 use App\Http\Controllers\MagicLinkController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -19,13 +20,13 @@ Route::get('/requester/login/{token}', [MagicLinkController::class, 'authenticat
     ->name('applicant.magic-login');
 Route::resource('/magic-link', MagicLinkController::class);
 
-Route::get('/form/event', function () {
+/*Route::get('/form/event', function () {
     return Inertia::render('event-form');
-});
+});*/
 
-Route::get('/dashboard', function () {
+/*Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');*/
 
 Route::middleware(['auth', 'role:applicant'])
     ->get('/applicant/dashboard', function () {
@@ -33,7 +34,10 @@ Route::middleware(['auth', 'role:applicant'])
     })
     ->name('applicant.dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:applicant'])->group(function () {
+    Route::resource('/applicant/dashboard', DashboardController::class)
+        ->names('applicant.dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

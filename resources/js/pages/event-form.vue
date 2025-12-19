@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3'
+import { useForm, router } from '@inertiajs/vue3'
 //import { computed, ref } from 'vue'
 import InputError from '@/components/InputError.vue'
 import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue';
@@ -53,7 +53,7 @@ const publicos = [
 ]
 
 const submit = () => {
-    alert('Teste!')
+    router.visit(route('applicant.dashboard.index'))
 }
 </script>
 

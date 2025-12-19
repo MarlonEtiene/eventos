@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue'
 import InputError from '@/components/InputError.vue'
+import Alert from '@/components/Alert.vue'
 
 // controla o tipo de acesso
 const accessType = ref<'interno' | 'solicitante'>('interno')
@@ -30,11 +31,16 @@ const requesterForm = useForm({
 })
 
 const submitRequester = () => {
-    requesterForm.post(route('magic-link.store'))
+    requesterForm.post(route('magic-link.store'), {
+        onSuccess: () => {
+            requesterForm.reset()
+        }
+    })
 }
 </script>
 
 <template>
+    <Alert />
     <div class="min-h-screen bg-slate-100 flex flex-col">
 
         <!-- Cabeçalho institucional -->
