@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Applicant\DashboardController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MagicLinkController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -37,6 +38,9 @@ Route::middleware(['auth', 'role:applicant'])
 Route::middleware(['auth', 'role:applicant'])->group(function () {
     Route::resource('/applicant/dashboard', DashboardController::class)
         ->names('applicant.dashboard');
+
+    Route::get('/calendar/events', [CalendarController::class, 'index'])
+        ->name('calendar.events');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

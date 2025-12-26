@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { useForm, router } from '@inertiajs/vue3';
+import { useForm, router, usePage } from '@inertiajs/vue3';
 //import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue';
+
+const page = usePage()
 
 const form = useForm({
     // 1. Identificação do solicitante
@@ -14,7 +16,9 @@ const form = useForm({
 
     // 2. Informações do evento
     event_title: '',
-    event_date_time: '',
+    event_date: page.props.event_date ?? '',
+    event_start_time: '',
+    event_end_time: '',
     location: '',
     target_audience: [] as string[],
     others_audience: '',

@@ -14,19 +14,18 @@ return new class extends Migration {
             $table->id();
 
             /** Identification */
-            $table->foreignId('user_id')
-                ->constrained('users');
-            $table->string('name');
-            $table->string('function');
-            $table->string('sector');
-            $table->string('phone');
+            $table->foreignId('user_id')->nullable();
+            $table->string('name')->nullable();
+            $table->string('function')->nullable();
+            $table->string('sector')->nullable();
+            $table->string('phone')->nullable();
 
             /** Event Information */
-            $table->foreignId('event_request_id')
-                ->constrained('event_requests')
-                ->cascadeOnDelete();
-            $table->string('event_title');
-            $table->dateTime('event_date_time');
+            $table->foreignId('event_request_id')->nullable();
+            $table->string('event_title')->nullable();
+            $table->dateTime('event_date')->nullable();
+            $table->time('event_start_time')->nullable();
+            $table->time('event_end_time')->nullable();
             $table->string('location')->nullable();
             $table->json('target_audience')->nullable();
             $table->json('others_audience')->nullable();
