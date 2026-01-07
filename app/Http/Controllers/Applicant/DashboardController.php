@@ -24,8 +24,13 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function create()
+    public function newEvent()
     {
         return Inertia::render('event-form');
+    }
+
+    public function newCommunication()
+    {
+        return Inertia::render('comunication-form');
     }
 }

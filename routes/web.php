@@ -15,7 +15,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('start');
 
 Route::get('/requester/login/{token}', [MagicLinkController::class, 'authenticate'])
     ->name('applicant.magic-login');
@@ -36,6 +36,12 @@ Route::middleware(['auth', 'role:applicant'])
     ->name('applicant.dashboard');
 
 Route::middleware(['auth', 'role:applicant'])->group(function () {
+    Route::get('/applicant/dashboard/new-event', [DashboardController::class, 'newEvent'])
+        ->name('applicant.dashboard.new-event');
+
+    Route::get('/applicant/dashboard/new-communication', [DashboardController::class, 'newCommunication'])
+        ->name('applicant.dashboard.new-communication');
+
     Route::resource('/applicant/dashboard', DashboardController::class)
         ->names('applicant.dashboard');
 
