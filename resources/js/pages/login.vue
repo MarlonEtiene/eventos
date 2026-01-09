@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { Head, useForm } from '@inertiajs/vue3'
 import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue'
 import InputError from '@/components/InputError.vue'
 import Alert from '@/components/Alert.vue'
@@ -40,6 +40,7 @@ const submitRequester = () => {
 </script>
 
 <template>
+    <Head title="Login"/>
     <Alert />
     <div class="min-h-screen bg-slate-100 flex flex-col">
 
@@ -163,10 +164,11 @@ const submitRequester = () => {
         </div>
 
         <!-- Rodapé -->
-        <div class="text-center py-4">
-            <span class="text-xs font-semibold text-sky-800 tracking-wide">
-                e-Eventos
-            </span>
+        <div class="text-center mt-1">
+            <span class="text-sm font-semibold text-sky-800 tracking-wide">e-Eventos</span>
+            <img src="/images/logo-eei.png"
+                 alt="Viva Rio Logo"
+                 class="h-10 mt-1 block mx-auto" />
         </div>
 
     </div>

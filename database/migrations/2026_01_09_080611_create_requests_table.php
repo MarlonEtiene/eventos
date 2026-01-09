@@ -11,22 +11,40 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_requests', function (Blueprint $table) {
+        Schema::create('requests', function (Blueprint $table) {
             $table->id();
+            // Quem solicitou
             $table->foreignId('requester_id')
                 ->constrained('users');
 
-            $table->string('status');
+            // Polimórfico (event_form ou communication_form)
+            $table->morphs('requestable');
+            // cria: requestable_id, requestable_type
 
+            // Status global
+            $table->string('status')->index();
+
+            /**
+             * ADMIN
+             * - Pode reprovar
+             * - NÃO aprova
+             */
             $table->foreignId('admin_reviewed_by')
                 ->nullable()
                 ->constrained('users');
+
             $table->timestamp('admin_reviewed_at')->nullable();
             $table->text('admin_rejection_reason')->nullable();
 
+            /**
+             * DIRECTORSHIP
+             * - Pode aprovar
+             * - Pode reprovar
+             */
             $table->foreignId('direction_reviewed_by')
                 ->nullable()
                 ->constrained('users');
+
             $table->timestamp('direction_reviewed_at')->nullable();
             $table->text('direction_rejection_reason')->nullable();
             $table->timestamps();
@@ -38,6 +56,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('event_requests');
+        Schema::dropIfExists('requests');
     }
 };

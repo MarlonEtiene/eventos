@@ -16,9 +16,8 @@ const form = useForm({
 
     // 2. Informações do evento
     event_title: '',
-    event_date: page.props.event_date ?? '',
-    event_start_time: '',
-    event_end_time: '',
+    event_date_start: '',
+    event_date_end: '',
     location: '',
     target_audience: [] as string[],
     others_audience: '',
@@ -54,7 +53,7 @@ const publicos = [
 ]
 
 const submit = () => {
-    router.visit(route('applicant.dashboard.index'))
+    form.post(route('event-requests.store'));
 }
 </script>
 
@@ -90,7 +89,10 @@ const submit = () => {
                 <input v-model="form.event_title" class="input" placeholder="Título do evento *" />
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="datetime-local" v-model="form.event_date_time" class="input" />
+                    <input type="datetime-local" v-model="form.event_date_start" class="input" />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="datetime-local" v-model="form.event_date_end" class="input" />
                 </div>
 
                 <input v-model="form.location" class="input" placeholder="Local do evento" />

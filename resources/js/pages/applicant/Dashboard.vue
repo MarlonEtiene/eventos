@@ -205,7 +205,7 @@ const goToCommunication = () => {
                 </button>
 
                 <button
-                    class="w-full py-2 text-sm text-slate-500"
+                    class="w-full py-2 bg-gray-400 text-sm text-white rounded-lg"
                     @click="showChoiceModal = false"
                 >
                     Cancelar

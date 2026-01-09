@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Applicant;
 
 use App\Http\Controllers\Controller;
-use App\Models\EventRequest;
+use App\Models\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -11,7 +11,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $requests = EventRequest::where('requester_id', Auth::id())
+        $requests = Request::where('requester_id', Auth::id())
             ->orderByDesc('created_at')
             ->get([
                 'id',
@@ -22,11 +22,6 @@ class DashboardController extends Controller
         return Inertia::render('applicant/Dashboard', [
             'requests' => $requests,
         ]);
-    }
-
-    public function newEvent()
-    {
-        return Inertia::render('event-form');
     }
 
     public function newCommunication()

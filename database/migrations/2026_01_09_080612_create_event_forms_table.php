@@ -13,23 +13,21 @@ return new class extends Migration {
         Schema::create('event_forms', function (Blueprint $table) {
             $table->id();
 
-            /** Identification */
-            $table->foreignId('user_id')->nullable();
+            /** Identification (snapshot do solicitante) */
             $table->string('name')->nullable();
             $table->string('function')->nullable();
             $table->string('sector')->nullable();
             $table->string('phone')->nullable();
 
             /** Event Information */
-            $table->foreignId('event_request_id')->nullable();
             $table->string('event_title')->nullable();
-            $table->dateTime('event_date')->nullable();
-            $table->time('event_start_time')->nullable();
-            $table->time('event_end_time')->nullable();
+            $table->dateTime('event_date_start')->nullable();
+            $table->dateTime('event_date_end')->nullable();
             $table->string('location')->nullable();
+
             $table->json('target_audience')->nullable();
-            $table->json('others_audience')->nullable();
-            $table->json('estimated_audience')->nullable();
+            $table->string('others_audience')->nullable();
+            $table->string('estimated_audience')->nullable();
 
             /** Description */
             $table->text('description')->nullable();
@@ -38,19 +36,22 @@ return new class extends Migration {
             $table->text('resources')->nullable();
             $table->text('responsibles')->nullable();
 
-            /** Especial Items */
+            /** Special Items */
             $table->boolean('with_snack')->default(false);
             $table->string('snack_description')->nullable();
+
             $table->boolean('with_gift')->default(false);
             $table->string('gift_description')->nullable();
 
             $table->boolean('with_contribution')->default(false);
             $table->text('contribution_description')->nullable();
 
+            /** Declaration */
             $table->boolean('declaration')->default(false);
 
             $table->timestamps();
         });
+
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Applicant\DashboardController;
+use App\Http\Controllers\Applicant\EventFormController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MagicLinkController;
 use App\Http\Controllers\ProfileController;
@@ -21,36 +22,29 @@ Route::get('/requester/login/{token}', [MagicLinkController::class, 'authenticat
     ->name('applicant.magic-login');
 Route::resource('/magic-link', MagicLinkController::class);
 
-/*Route::get('/form/event', function () {
-    return Inertia::render('event-form');
-});*/
-
-/*Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');*/
-
 Route::middleware(['auth', 'role:applicant'])
-    ->get('/applicant/dashboard', function () {
+    ->get('/dashboard', function () {
         return ['Dashboard Solicitante'];
     })
     ->name('applicant.dashboard');
 
-Route::middleware(['auth', 'role:applicant'])->group(function () {
-    Route::get('/applicant/dashboard/new-event', [DashboardController::class, 'newEvent'])
-        ->name('applicant.dashboard.new-event');
+Route::middleware(['auth', 'role:applicant'])
+    ->prefix('/applicant')
+    ->group(function () {
+        Route::get('/dashboard/new-communication', [DashboardController::class, 'newCommunication'])
+            ->name('applicant.dashboard.new-communication');
 
-    Route::get('/applicant/dashboard/new-communication', [DashboardController::class, 'newCommunication'])
-        ->name('applicant.dashboard.new-communication');
+        Route::resource('/dashboard', DashboardController::class)
+            ->names('applicant.dashboard');
 
-    Route::resource('/applicant/dashboard', DashboardController::class)
-        ->names('applicant.dashboard');
+        Route::get('/calendar/events', [CalendarController::class, 'index'])
+            ->name('calendar.events');
 
-    Route::get('/calendar/events', [CalendarController::class, 'index'])
-        ->name('calendar.events');
+        Route::resource('/event-requests', EventFormController::class);
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
