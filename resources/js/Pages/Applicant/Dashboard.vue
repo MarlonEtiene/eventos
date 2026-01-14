@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Head, Link, router } from '@inertiajs/vue3'
-import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue'
+import InstitutionalHeader from '@/Pages/Partials/InstitutionalHeader.vue'
+import {formatters} from "@/composables/formatters";
 
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+
+const { formatDate } = formatters();
 
 type Request = {
     id: number
@@ -26,6 +29,7 @@ const activeTab = ref<'list' | 'calendar'>('list')
 /* Modal de escolha */
 const showChoiceModal = ref(false)
 const selectedDate = ref<string | null>(null)
+const selectedStartTime = ref('09:00') // default amigável
 
 /* Status visual */
 const statusMap: Record<string, string> = {
@@ -43,7 +47,7 @@ const calendarOptions = {
     initialView: 'dayGridMonth',
     locale: 'pt-br',
     height: 'auto',
-    timeZone: 'America/Sao_Paulo',
+
     events: '/calendar/events',
 
     headerToolbar: isMobile
@@ -64,27 +68,64 @@ const calendarOptions = {
         week: 'Semana',
         day: 'Dia',
     },
-
     dateClick(info) {
         selectedDate.value = info.dateStr
         showChoiceModal.value = true
     },
+    eventContent,
+}
+
+function eventContent(arg) {
+    const view = arg.view.type
+    const start = arg.event.start
+
+    const time = start
+        ? start.toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+        })
+        : ''
+
+    const container = document.createElement('div')
+    container.className = 'fc-event-clean'
+
+    if (view === 'dayGridMonth') {
+        // MONTH (mobile-first)
+        const timeEl = document.createElement('div')
+        timeEl.className = 'fc-event-time'
+        timeEl.innerText = time
+
+        const titleEl = document.createElement('div')
+        titleEl.className = 'fc-event-title'
+        titleEl.innerText = arg.event.title
+
+        container.appendChild(timeEl)
+        container.appendChild(titleEl)
+    } else {
+        // WEEK / DAY
+        container.innerText = `${time} – ${arg.event.title}`
+    }
+
+    return { domNodes: [container] }
 }
 
 
 /* Redirecionamentos */
 const goToEvent = () => {
     showChoiceModal.value = false
-    router.visit(route('event-requests.create'), {
-        data: { event_date: selectedDate.value },
-    })
+    router.visit(route('event-requests.create', {
+        date: selectedDate.value,
+        start: selectedStartTime.value,
+    }))
+
 }
 
 const goToCommunication = () => {
     showChoiceModal.value = false
-    router.visit(route('communication-requests.create'), {
-        data: { event_date: selectedDate.value },
-    })
+    router.visit(route('communication-requests.create', {
+        date: selectedDate.value,
+        start: selectedStartTime.value,
+    }))
 }
 </script>
 
@@ -141,11 +182,12 @@ const goToCommunication = () => {
                         </span>
 
                         <p class="mt-1 text-sm font-medium text-slate-700">
-                            {{ r.title }}
+                            {{ r.requestable.title }}
                         </p>
 
                         <p class="text-xs text-slate-400">
-                            {{ new Date(r.created_at).toLocaleDateString() }}
+                            <!-- {{ new Date(r.requestable.start_at).toLocaleDateString() }} -->
+                            {{ formatDate(r.requestable.start_at, null, 'DD/MM/YYYY HH:mm') }}
                         </p>
                     </div>
 
@@ -187,8 +229,19 @@ const goToCommunication = () => {
         >
             <div class="bg-white rounded-xl p-6 w-80 space-y-4">
                 <h3 class="text-center font-semibold text-slate-700">
-                    O que deseja solicitar?
+                    Agendamento do Evento
                 </h3>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-600">
+                        Horário de início
+                    </label>
+                    <input
+                        type="time"
+                        v-model="selectedStartTime"
+                        class="input"
+                    />
+                </div>
 
                 <button
                     class="w-full py-2 bg-blue-600 text-white rounded-lg"
@@ -212,7 +265,6 @@ const goToCommunication = () => {
                 </button>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -231,6 +283,39 @@ const goToCommunication = () => {
     .fc-button {
         padding: 0.35rem 0.5rem;
         font-size: 0.75rem;
+    }
+
+    /* Base do evento */
+    .fc-event-clean {
+        font-size: 0.7rem;
+        line-height: 1.1;
+        padding: 2px 3px;
+        overflow: hidden;
+    }
+
+    /* Hora (mais discreta) */
+    .fc-event-time {
+        font-size: 0.65rem;
+        color: #475569; /* slate-600 */
+    }
+
+    /* Título */
+    .fc-event-title {
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Melhor ajuste no mobile */
+    @media (max-width: 640px) {
+        .fc-event-clean {
+            font-size: 0.65rem;
+        }
+
+        .fc-event-title {
+            max-width: 100%;
+        }
     }
 }
 </style>

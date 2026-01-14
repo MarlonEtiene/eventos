@@ -20,9 +20,9 @@ return new class extends Migration {
             $table->string('phone')->nullable();
 
             /** Event Information */
-            $table->string('event_title')->nullable();
-            $table->dateTime('event_date_start')->nullable();
-            $table->dateTime('event_date_end')->nullable();
+            $table->string('title')->nullable();
+            $table->dateTime('start_at')->nullable();
+            $table->dateTime('end_at')->nullable();
             $table->string('location')->nullable();
 
             $table->json('target_audience')->nullable();

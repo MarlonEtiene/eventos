@@ -14,40 +14,39 @@ return new class extends Migration
         Schema::create('communication_forms', function (Blueprint $table) {
             $table->id();
 
-            /** Identification (snapshot) */
-            $table->string('name')->nullable();
-            $table->string('function')->nullable();
-            $table->string('sector')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('email')->nullable();
+            /** Identificação do solicitante */
+            $table->string('name');       // Nome e sobrenome
+            $table->string('sector');     // Setor ou equipe
+            $table->string('phone');      // WhatsApp
+            $table->string('email');      // E-mail para contato
 
-            /** Communication Info */
-            $table->string('title')->nullable();
-            $table->string('communication_type')->nullable();
-            // ex: campanha, aviso, institucional
+            /** Tipo de serviço solicitado */
+            $table->string('communication_type');
+            $table->string('communication_type_other')->nullable();
 
-            $table->json('target_audience')->nullable();
-            $table->string('others_audience')->nullable();
+            /** Solicitação */
+            $table->string('title');
+            $table->dateTime('start_at'); // Início do evento / ação
+            $table->dateTime('end_at');   // Fim do evento / ação
 
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
+            /** Público-alvo (texto livre, como no modelo) */
+            $table->string('target_audience');
 
-            /** Channels */
-            $table->boolean('use_intranet')->default(false);
-            $table->boolean('use_email')->default(false);
-            $table->boolean('use_social_media')->default(false);
-            $table->boolean('use_printed_material')->default(false);
+            /** Conteúdo da peça */
+            $table->text('message');
 
-            /** Description */
-            $table->text('message')->nullable();
+            /** Prazo de entrega */
+            $table->date('delivery_date');
+
+            /** Observações adicionais */
             $table->text('observations')->nullable();
 
             /** Declaration */
             $table->boolean('declaration')->default(false);
 
+            /** Controle */
             $table->timestamps();
         });
-
     }
 
     /**

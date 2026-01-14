@@ -68,7 +68,7 @@ const openAlert = () => {
 
     setTimeout(() => {
         showAlert.value = false
-    }, 5000)
+    }, 8000)
 }
 
 onMounted(openAlert)

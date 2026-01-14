@@ -2,9 +2,11 @@
 import { useForm, router, usePage } from '@inertiajs/vue3';
 //import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
-import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue';
+import InstitutionalHeader from '@/Pages/Partials/InstitutionalHeader.vue';
 
 const page = usePage()
+const prefillStart = page.props.prefillStart as string | null
+const prefillEnd = page.props.prefillEnd as string | null
 
 const form = useForm({
     // 1. Identificação do solicitante
@@ -15,9 +17,9 @@ const form = useForm({
     phone: '',
 
     // 2. Informações do evento
-    event_title: '',
-    event_date_start: '',
-    event_date_end: '',
+    title: '',
+    start_at: '',
+    end_at: '',
     location: '',
     target_audience: [] as string[],
     others_audience: '',
@@ -43,6 +45,14 @@ const form = useForm({
     // 6. Declaração
     declaration: false,
 })
+
+if (prefillStart) {
+    form.start_at = prefillStart
+}
+
+if (prefillEnd) {
+    form.end_at = prefillEnd
+}
 
 const publicos = [
     'Pacientes',
@@ -86,13 +96,13 @@ const submit = () => {
             <section class="space-y-3">
                 <h2 class="font-semibold text-slate-700">2. Informações Sobre o Evento</h2>
 
-                <input v-model="form.event_title" class="input" placeholder="Título do evento *" />
+                <input v-model="form.title" class="input" placeholder="Título do evento *" />
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="datetime-local" v-model="form.event_date_start" class="input" />
+                    <input type="datetime-local" v-model="form.start_at" class="input" />
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="datetime-local" v-model="form.event_date_end" class="input" />
+                    <input type="datetime-local" v-model="form.end_at" class="input" />
                 </div>
 
                 <input v-model="form.location" class="input" placeholder="Local do evento" />

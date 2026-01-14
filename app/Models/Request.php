@@ -25,4 +25,9 @@ class Request extends Model implements Auditable
     {
         return $this->morphTo();
     }
+
+    public function attachments()
+    {
+        return $this->hasMany(RequestAttachment::class);
+    }
 }

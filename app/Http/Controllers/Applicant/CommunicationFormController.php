@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Applicant;
 
 use App\Http\Controllers\Controller;
-use App\Models\EventForm;
-use App\Models\Request;
+use App\Models\CommunicationForm;
 use Carbon\Carbon;
-use Illuminate\Http\Request as HRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use App\Models\Request as MRequest;
 use Throwable;
 
-class EventFormController extends Controller
+class CommunicationFormController extends Controller
 {
-    public function create(HRequest $request)
+    public function create(Request $request)
     {
         $date = $request->query('date');
         $start = $request->query('start');
@@ -31,7 +31,7 @@ class EventFormController extends Controller
             $endDateTime = $startDateTime->copy()->addHour();
         }
 
-        return Inertia::render('EventForm', [
+        return Inertia::render('CommunicationForm', [
             'prefillStart' => $startDateTime?->format('Y-m-d\TH:i'),
             'prefillEnd' => $endDateTime?->format('Y-m-d\TH:i'),
         ]);
@@ -40,21 +40,34 @@ class EventFormController extends Controller
     /**
      * @throws Throwable
      */
-    public function store(HRequest $request)
+    public function store(Request $request)
     {
         $data = $request->all();
-        DB::transaction(function () use ($data) {
+        DB::transaction(function () use ($data, $request) {
             $data['start_at'] = Carbon::parse($data['start_at']);
             $data['end_at'] = Carbon::parse($data['end_at']);
-            $form = EventForm::create($data);
+            $form = CommunicationForm::create($data);
 
-            Request::query()
+            $process = MRequest::query()
                 ->create([
                     'requester_id' => auth()->id(),
                     'status' => 'submitted',
-                    'requestable_type' => EventForm::class,
+                    'requestable_type' => CommunicationForm::class,
                     'requestable_id' => $form->id,
                 ]);
+
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    $path = $file->store('requests/'. $process->id, 'public');
+
+                    $process->attachments()->create([
+                        'original_name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'mime_type' => $file->getMimeType(),
+                        'size' => $file->getSize(),
+                    ]);
+                }
+            }
         });
 
         return to_route('applicant.dashboard.index');

@@ -2,38 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EventRequest;
+use App\Models\CommunicationForm;
+use App\Models\EventForm;
+use App\Models\Request;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 
 class CalendarController extends Controller
 {
     public function index()
     {
-        $events = EventRequest::query()
+        $events = Request::query()
             ->whereIn('status', [
                 'submitted',
-                'approved_by_admin',
+                'pending_directorship',
                 'approved',
             ])
-            ->with('form:id,event_request_id,event_date,event_start_time,event_end_time,event_title')
+            ->whereIn('requestable_type', [
+                EventForm::class,
+                CommunicationForm::class,
+            ])
+            ->with('requestable')
             ->get()
-            ->map(function ($request) {
-                $form = $request->form;
+            ->map(function (Request $request) {
+                $form = $request->requestable;
+
+                if (
+                    !$form ||
+                    !$form->start_at ||
+                    !$form->end_at
+                ) {
+                    return null;
+                }
+
+                $start = Carbon::parse(
+                    $form->start_at,
+                    'America/Sao_Paulo'
+                );
+
+                $end = Carbon::parse(
+                    $form->end_at,
+                    'America/Sao_Paulo'
+                );
 
                 return [
                     'id' => $request->id,
-                    'title' => $form->event_title,
-                    'start' => Carbon::parse($form->event_date)
-                        ->setTimeFromTimeString($form->event_start_time)
-                        ->format('Y-m-d H:i:s'),
-                    'end' => Carbon::parse($form->event_date)
-                        ->setTimeFromTimeString($form->event_end_time)
-                        ->format('Y-m-d H:i:s'),
-                    'status' => $request->status,
+                    'title' => $form->title ?? 'Evento',
+                    'start' => $start->toDateTimeString(),
+                    'end' => $end->toDateTimeString(),
+                    'extendedProps' => [
+                        'status' => $request->status,
+                        'type' => 'event',
+                    ],
                 ];
-            });
-
+            })
+            ->filter()
+            ->values();
         return response()->json($events);
     }
 }

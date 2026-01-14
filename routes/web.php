@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Applicant\CommunicationFormController;
 use App\Http\Controllers\Applicant\DashboardController;
 use App\Http\Controllers\Applicant\EventFormController;
 use App\Http\Controllers\CalendarController;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('login', [
+    return Inertia::render('Login', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -28,19 +29,17 @@ Route::middleware(['auth', 'role:applicant'])
     })
     ->name('applicant.dashboard');
 
+Route::get('/calendar/events', [CalendarController::class, 'index'])
+    ->name('calendar.events');
+
 Route::middleware(['auth', 'role:applicant'])
     ->prefix('/applicant')
     ->group(function () {
-        Route::get('/dashboard/new-communication', [DashboardController::class, 'newCommunication'])
-            ->name('applicant.dashboard.new-communication');
-
         Route::resource('/dashboard', DashboardController::class)
             ->names('applicant.dashboard');
 
-        Route::get('/calendar/events', [CalendarController::class, 'index'])
-            ->name('calendar.events');
-
         Route::resource('/event-requests', EventFormController::class);
+        Route::resource('/communication-requests', CommunicationFormController::class);
 
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
