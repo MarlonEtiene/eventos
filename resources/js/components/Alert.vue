@@ -76,9 +76,13 @@ onMounted(openAlert)
 /**
  * Reage a novas mensagens (redirects Inertia)
  */
-watch(flashMessage, () => {
-    openAlert()
-})
+watch(
+    () => page.props.flash,
+    () => {
+        openAlert()
+    },
+    { deep: true }
+)
 </script>
 
 <template>
