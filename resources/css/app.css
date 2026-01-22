@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.textInput {
+    @apply rounded-md border border-gray-900 shadow-sm focus:border-gray-500 focus:ring-gray-500 uppercase;
+}
+
+.textCalendInput {
+    @apply rounded-md border border-gray-900 shadow-sm focus:border-gray-500 focus:ring-gray-500 uppercase pt-2 pb-2 pr-3 pl-10 py-2;
+}
+
+.lowercaseInput {
+    @apply rounded-md border border-gray-900 shadow-sm focus:border-gray-500 focus:ring-gray-500;
+}

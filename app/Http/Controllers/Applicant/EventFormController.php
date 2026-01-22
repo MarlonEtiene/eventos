@@ -31,7 +31,7 @@ class EventFormController extends Controller
             $endDateTime = $startDateTime->copy()->addHour();
         }
 
-        return Inertia::render('EventForm', [
+        return Inertia::render('RequestCreate', [
             'prefillStart' => $startDateTime?->format('Y-m-d\TH:i'),
             'prefillEnd' => $endDateTime?->format('Y-m-d\TH:i'),
         ]);

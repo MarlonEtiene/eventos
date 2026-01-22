@@ -6,6 +6,7 @@ use App\Mail\RequesterMagicLinkMail;
 use App\Models\MagicLink;
 use App\Models\User;
 use DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -70,21 +71,26 @@ class MagicLinkController extends Controller
 
     public function authenticate(string $token)
     {
-        $magicLink = MagicLink::where('token', $token)->firstOrFail();
+        try {
+            $magicLink = MagicLink::where('token', $token)->firstOrFail();
+            if ($magicLink->isExpired()) {
+                $magicLink->delete();
 
-        if ($magicLink->isExpired()) {
+                session()->flash('type', 'warning');
+                session()->flash('message', 'Este link expirou. Solicite um novo acesso.');
+
+                return redirect()
+                    ->route('start');
+            }
+
+            Auth::login($magicLink->user);
             $magicLink->delete();
 
-            return redirect()
-                ->route('login')
-                ->withErrors([
-                    'email' => 'Este link expirou. Solicite um novo acesso.',
-                ]);
+            return redirect()->route('applicant.dashboard.index');
+        } catch ( ModelNotFoundException $e) {
+            session()->flash('type', 'warning');
+            session()->flash('message', 'Este link expirou. Solicite um novo acesso.');
+            return redirect()->route('start');
         }
-
-        Auth::login($magicLink->user);
-        $magicLink->delete();
-
-        return redirect()->route('applicant.dashboard.index');
     }
 }

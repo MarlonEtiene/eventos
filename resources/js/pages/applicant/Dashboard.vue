@@ -71,8 +71,7 @@ const calendarOptions = {
     dateClick(info) {
         selectedDate.value = info.dateStr
         showChoiceModal.value = true
-    },
-    eventContent,
+    }
 }
 
 function eventContent(arg) {
@@ -119,14 +118,6 @@ const goToEvent = () => {
     }))
 
 }
-
-const goToCommunication = () => {
-    showChoiceModal.value = false
-    router.visit(route('communication-requests.create', {
-        date: selectedDate.value,
-        start: selectedStartTime.value,
-    }))
-}
 </script>
 
 <template>
@@ -156,11 +147,11 @@ const goToCommunication = () => {
                 <button
                     class="flex-1 py-3 text-sm font-semibold"
                     :class="activeTab === 'calendar'
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-green-600 text-white'
                         : 'text-slate-600'"
                     @click="activeTab = 'calendar'"
                 >
-                    Calendário
+                    Nova Solicitação
                 </button>
             </div>
 
@@ -186,7 +177,6 @@ const goToCommunication = () => {
                         </p>
 
                         <p class="text-xs text-slate-400">
-                            <!-- {{ new Date(r.requestable.start_at).toLocaleDateString() }} -->
                             {{ formatDate(r.requestable.start_at, null, 'DD/MM/YYYY HH:mm') }}
                         </p>
                     </div>
@@ -199,12 +189,12 @@ const goToCommunication = () => {
                             {{ r.status }}
                         </span>
 
-<!--                        <Link
-                            :href="route('requests.show', r.id)"
+                        <Link
+                            :href="route('event-requests.show', r.id)"
                             class="block text-xs text-blue-600 hover:underline"
                         >
                             Visualizar
-                        </Link>-->
+                        </Link>
                     </div>
                 </div>
 
@@ -247,14 +237,7 @@ const goToCommunication = () => {
                     class="w-full py-2 bg-blue-600 text-white rounded-lg"
                     @click="goToEvent"
                 >
-                    Solicitação de Evento
-                </button>
-
-                <button
-                    class="w-full py-2 bg-green-600 text-white rounded-lg"
-                    @click="goToCommunication"
-                >
-                    Solicitação de Comunicação
+                    Iniciar Solicitação
                 </button>
 
                 <button

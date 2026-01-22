@@ -44,7 +44,7 @@ class DashboardController extends Controller
             ])
             ->get();
 
-        return Inertia::render('Applicant/Dashboard', [
+        return Inertia::render('applicant/Dashboard', [
             'requests' => $requests,
         ]);
     }
