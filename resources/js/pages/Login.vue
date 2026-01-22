@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Head, useForm, usePage } from '@inertiajs/vue3'
-import InstitutionalHeader from '@/Pages/Partials/InstitutionalHeader.vue'
+import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue'
 import InputError from '@/components/InputError.vue'
 import Alert from '@/components/Alert.vue'
 

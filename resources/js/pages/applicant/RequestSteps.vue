@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { router } from "@inertiajs/vue3";
 
 const props = defineProps<{
     modelValue: number
+    disabledSteps?: number[]
+    flowResolved?: boolean
 }>()
 
 const emit = defineEmits(['update:modelValue'])
+const isDisabled = (stepId: number) =>
+    props.disabledSteps?.includes(stepId)
 
 const steps = [
     { id: 1, label: 'Identificação' },
@@ -23,27 +26,58 @@ const current = computed(() =>
     steps.find(s => s.id === currentStep.value)
 )
 
+const canShowNext = computed(() => {
+    // Step 1 → só se o fluxo já foi decidido
+    if (currentStep.value === 1) {
+        return props.flowResolved
+    }
+
+    // Outros steps → comportamento normal
+    return currentStep.value < steps.length
+})
+
 function goToStep(step: number) {
+    if (isDisabled(step)) return
     currentStep.value = step
+}
+
+function nextStep() {
+    const next = [...steps]
+        .map(s => s.id)
+        .find(id => id > currentStep.value && !isDisabled(id))
+
+    if (next) {
+        goToStep(next)
+    }
+}
+
+function previousStep() {
+    const prev = [...steps]
+        .map(s => s.id)
+        .filter(id => id < currentStep.value && !isDisabled(id))
+        .pop()
+
+    if (prev) {
+        goToStep(prev)
+    }
 }
 </script>
 
 <template>
     <div class="w-full space-y-4">
-
         <!-- MOBILE STEPPER -->
         <div class="block md:hidden space-y-2">
             <!-- Dots -->
             <div class="flex items-center justify-center gap-3">
-        <span
-            v-for="step in steps"
-            :key="step.id"
-            class="h-2 w-2 rounded-full transition"
-            :class="step.id === currentStep
-            ? 'bg-blue-600 scale-125'
-            : 'bg-gray-300'
-          "
-        />
+                <span
+                    v-for="step in steps"
+                    :key="step.id"
+                    class="h-2 w-2 rounded-full transition"
+                    :class="step.id === currentStep
+                    ? 'bg-blue-600 scale-125'
+                    : 'bg-gray-300'
+                  "
+                />
             </div>
 
             <!-- Label -->
@@ -62,17 +96,19 @@ function goToStep(step: number) {
             <button
                 v-for="step in steps"
                 :key="step.id"
-                @click="goToStep(step.id)"
+                @click="!isDisabled(step.id) && goToStep(step.id)"
                 class="flex-1 px-4 py-2 rounded-lg border text-sm transition"
-                :class="step.id === currentStep
-          ? 'bg-blue-600 text-white border-blue-600'
-          : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-        "
+                :class="[
+                    step.id === currentStep
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50',
+                    isDisabled(step.id) && 'opacity-40 cursor-not-allowed pointer-events-none'
+                ]"
             >
                 {{ step.label }}
                 <span class="block text-xs opacity-70">
-          Passo {{ step.id }}
-        </span>
+                    Passo {{ step.id }}
+                </span>
             </button>
         </div>
 
@@ -87,26 +123,20 @@ function goToStep(step: number) {
         <div class="flex justify-between">
             <button
                 v-if="currentStep > 1"
-                @click="goToStep(currentStep - 1)"
-                class="px-4 py-2 rounded-lg border text-sm"
+                @click="previousStep"
+                class="px-4 py-2 md:px-6 md:py-3 rounded-lg bg-gray-300 border text-sm"
             >
-                Voltar
+                <fai icon="fa-solid fa-circle-chevron-left" size="lg" class="text-black" />&nbsp;&nbsp; Voltar
             </button>
 
             <button
-                v-if="currentStep < steps.length"
-                @click="goToStep(currentStep + 1)"
-                class="ml-auto px-4 py-2 rounded-lg bg-blue-600 text-white text-sm"
+                v-if="canShowNext"
+                @click="nextStep"
+                class="ml-auto px-4 py-2 md:px-6 md:py-3 rounded-lg bg-blue-600 text-white text-sm disabled:opacity-40"
             >
-                Próximo
+                Próximo&nbsp;&nbsp; <fai icon="fa-solid fa-circle-chevron-right" size="lg" class="text-white" />
             </button>
         </div>
-        <button
-            class="ml-auto px-4 py-2 rounded-lg bg-slate-600 text-white text-sm w-full"
-            @click="router.visit(route('applicant.dashboard.index'))"
-        >
-            Voltar para Dashboard
-        </button>
     </div>
 </template>
 

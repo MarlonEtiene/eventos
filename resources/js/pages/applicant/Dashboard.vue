@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Head, Link, router } from '@inertiajs/vue3'
-import InstitutionalHeader from '@/Pages/Partials/InstitutionalHeader.vue'
+import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue'
 import {formatters} from "@/composables/formatters";
 
 import FullCalendar from '@fullcalendar/vue3'

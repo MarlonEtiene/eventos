@@ -2,7 +2,7 @@
 import { useForm, router, usePage } from '@inertiajs/vue3';
 //import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
-import InstitutionalHeader from '@/Pages/Partials/InstitutionalHeader.vue';
+import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue';
 
 const page = usePage()
 const prefillStart = page.props.prefillStart as string | null

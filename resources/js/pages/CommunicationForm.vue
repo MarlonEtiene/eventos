@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Head, useForm, usePage } from '@inertiajs/vue3'
-import InstitutionalHeader from '@/Pages/Partials/InstitutionalHeader.vue'
+import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue'
 import InputError from '@/components/InputError.vue'
-import RequestAttachments from "@/Pages/Components/RequestAttachments.vue";
+import RequestAttachments from "@/pages/components/RequestAttachments.vue";
 
 const page = usePage()
 const previews = ref<string[]>([])

@@ -2,6 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+@theme inline {
+    --color-custom-primary: #800000;
+
+    --breakpoint-hd: 1441px;
+    --breakpoint-lgx: 1361px;
+
+    --font-sans: Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-dark-blue: #16607a;
+    --color-medium-blue: #1d8aaa;
+    --color-light-blue: #36b0d4;
+
+    --color-green-hospital: #27ae60;
+    --color-medium-gray: #bdc3c7;
+    --color-login-frame: rgb(23, 110, 150);
+
+    --color-dashboard-header-one: #6979bd;
+    --color-dashboard-header-two: #707be8;
+    --color-dashboard-row: #9fc5e5;
+
+    --text-tiny: 0.7rem;
+    --text-tiny--line-height: 1.4;
+    --text-tiny--letter-spacing: 0rem;
+    --text-tiny--font-weight: 500;
+}
+
+@layer utilities {
+    .text-tiny {
+        font-size: var(--text-tiny);
+        line-height: var(--text-tiny--line-height);
+        letter-spacing: var(--text-tiny--letter-spacing);
+        font-weight: var(--text-tiny--font-weight);
+    }
+}
+
 .textInput {
     @apply rounded-md border border-gray-900 shadow-sm focus:border-gray-500 focus:ring-gray-500 uppercase;
 }
