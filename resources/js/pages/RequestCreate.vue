@@ -5,6 +5,7 @@ import RequestSteps from '@/pages/applicant/RequestSteps.vue'
 import InstitutionalHeader from "@/pages/partials/InstitutionalHeader.vue";
 import ApplicantSection from "@/pages/applicant/Partials/ApplicantSection.vue";
 import EventSection from "@/pages/applicant/Partials/EventSection.vue";
+import CommunicationSection from "@/pages/applicant/Partials/CommunicationSection.vue";
 
 const step = ref(1)
 //const disabledSteps = ref<number[]>([])
@@ -42,6 +43,7 @@ const form = useForm({
     end_at: '',
     location: null,
     target_audience: [] as string[],
+    others_audience: '',
     estimated_audience: '',
     // 2.1 - Sobre o Evento
     objective: '',
@@ -58,7 +60,12 @@ const form = useForm({
 
     // 3 - Comunicação
     communication_type: '',
-    message: '',
+    communication_type_other: '',
+
+    delivery_date: '',
+    observations: '',
+
+    attachments: [] as File[],
 
     // Declaração
     declaration: false,
@@ -70,6 +77,10 @@ const canSubmit = computed(() => {
         form.declaration === true
     )
 })
+
+const submitForm = () => {
+    console.log(form);
+}
 
 function handleEventDecision(value: boolean) {
     form.has_event = value
@@ -91,7 +102,7 @@ function handleEventDecision(value: boolean) {
             title="Solicitação de Eventos"
             subtitle="Formulário Institucional"
             hospital="Hospital Municipal Albert Schweitzer"
-            class="py-4 md:py-8"
+            class="py-4 md:py-4"
         />
 
         <div class="max-w-3xl mx-auto bg-white rounded-xl shadow p-4 space-y-4 mt-2">
@@ -112,7 +123,8 @@ function handleEventDecision(value: boolean) {
                 </template>
 
                 <template #step-3>
-                    <CommunicationSection />
+                    <CommunicationSection :form="form"
+                                          @decide-event="handleEventDecision" />
                 </template>
             </RequestSteps>
             <section
@@ -141,7 +153,7 @@ function handleEventDecision(value: boolean) {
                 </button>
 
                 <button
-                    type="submit"
+                    @click="submitForm"
                     :disabled="!canSubmit"
                     class="ml-auto px-4 py-2 md:px-6 md:py-3 rounded-lg text-white transition
                         bg-green-600 disabled:bg-green-300 disabled:cursor-not-allowed"

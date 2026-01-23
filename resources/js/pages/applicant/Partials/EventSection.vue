@@ -47,10 +47,9 @@ props.form.end_at = prefillEnd
 
 <template>
     <div class="p-2 space-y-3">
+        <h2 class="text-sm font-semibold text-slate-700">- Solicitação de Evento</h2>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
             <div>
-<!--                <InputLabel for="title" value="Nome do Evento"
-                            class="text-tiny overflow-hidden text-ellipsis whitespace-nowra mt-1" />-->
                 <input
                     v-model="form.name"
                     :disabled="readonly"
@@ -73,14 +72,12 @@ props.form.end_at = prefillEnd
         </div>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
             <div>
-<!--                <InputLabel for="location" value="Local"
-                            class="text-tiny overflow-hidden text-ellipsis whitespace-nowra mt-1" />-->
                 <select v-model="form.location"
                         :disabled="readonly"
                         class="textInput w-full text-tiny"
                 >
-                    <option :value="null">Selecione o local</option>
-                    <option v-for=" l in locals" :value="l">{{ l }}</option>
+                    <option :value="null" disabled>Selecione o local</option>
+                    <option v-for="l in locals" :value="l">{{ l }}</option>
                 </select>
 
             </div>
@@ -98,19 +95,71 @@ props.form.end_at = prefillEnd
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-<!--                <InputLabel for="estimated_audience" value="Estimativa de participantes" required
-                            class="text-tiny overflow-hidden text-ellipsis whitespace-nowra mt-1"
-                />-->
+                <input v-model="form.others_audience"
+                       class="textInput w-full text-tiny" placeholder="Publico-Alvo Outros"/>
+            </div>
+            <div>
                 <input v-model="form.estimated_audience"
                        class="textInput w-full text-tiny" placeholder="Estimativa de participantes"/>
             </div>
             <div></div>
         </div>
+
+        <h2 class="text-sm font-semibold text-slate-700">- Sobre o Evento</h2>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
             <textarea v-model="form.objective" class="textInput w-full text-tiny h-20" placeholder="Objetivo *" />
             <textarea v-model="form.activities" class="textInput w-full text-tiny h-20" placeholder="Atividades previstas *" />
             <textarea v-model="form.resources" class="textInput w-full text-tiny h-20" placeholder="Recursos necessários *" />
             <textarea v-model="form.responsibles" class="textInput w-full text-tiny h-20" placeholder="Responsáveis pela execução *" />
         </div>
+
+        <h2 class="text-sm font-semibold text-slate-700">- Itens Especiais do Evento</h2>
+        <div>
+            <label class="text-sm font-bold">Haverá lanche/alimentação?</label>
+            <select v-model="form.with_snack" class="textInput w-full text-tiny">
+                <option :value="null" disabled>Selecione</option>
+                <option :value="true">Sim</option>
+                <option :value="false">Não</option>
+            </select>
+        </div>
+
+        <textarea
+            v-if="form.with_snack"
+            v-model="form.snack_description"
+            class="textInput w-full text-tiny h-20"
+            placeholder="Qual lanche/alimentação?"
+        />
+
+        <div>
+            <label class="text-sm font-bold">Haverá brinde ou premiação?</label>
+            <select v-model="form.with_gift" class="textInput w-full text-tiny">
+                <option :value="null" disabled>Selecione</option>
+                <option :value="true">Sim</option>
+                <option :value="false">Não</option>
+            </select>
+        </div>
+
+        <textarea
+            v-if="form.with_gift"
+            v-model="form.gift_description"
+            class="textInput w-full text-tiny h-20"
+            placeholder="Quais brindes/premiações?"
+        />
+
+        <!-- CONTRIBUIÇÃO -->
+        <div>
+            <label class="text-sm font-bold">Solicitação de Recursos ou Notificação de Contribuição Externa/Doações</label>
+            <select v-model="form.with_contribution" class="textInput w-full text-tiny">
+                <option :value="null" disabled>Haverá solicitação de recursos ou contribuição externa?</option>
+                <option :value="true">Sim</option>
+                <option :value="false">Não</option>
+            </select>
+        </div>
+        <textarea
+            v-if="form.with_contribution"
+            v-model="form.contribution_description"
+            class="textInput w-full text-tiny h-20"
+            placeholder="Descrever solicitação/contribuição"
+        />
     </div>
 </template>
