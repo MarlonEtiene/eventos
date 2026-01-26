@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
-import InputLabel from '@/components/InputLabel.vue'
 import {usePage} from "@inertiajs/vue3";
+import InputLabel from '@/components/InputLabel.vue'
+import InputError from "@/components/InputError.vue";
 
 const props = defineProps<{
     form: any
@@ -51,23 +52,26 @@ props.form.end_at = prefillEnd
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
             <div>
                 <input
-                    v-model="form.name"
+                    v-model="form.title"
                     :disabled="readonly"
                     class="textInput w-full text-tiny"
                     placeholder="Nome do Evento"
                 />
             </div>
+            <InputError :message="form.errors.title" />
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
                 <InputLabel for="start_at" value="Data/Hora de Início"
                             class="text-tiny overflow-hidden text-ellipsis whitespace-nowra mt-1" />
                 <input type="datetime-local" v-model="form.start_at" class="textInput w-full text-tiny" />
+                <InputError :message="form.errors.start_at" />
             </div>
             <div>
                 <InputLabel for="end_at" value="Data/Hora de Fim"
                             class="text-tiny overflow-hidden text-ellipsis whitespace-nowra mt-1" />
                 <input type="datetime-local" v-model="form.end_at" class="textInput w-full text-tiny" />
+                <InputError :message="form.errors.end_at" />
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
@@ -79,7 +83,7 @@ props.form.end_at = prefillEnd
                     <option :value="null" disabled>Selecione o local</option>
                     <option v-for="l in locals" :value="l">{{ l }}</option>
                 </select>
-
+                <InputError :message="form.errors.location" />
             </div>
             <div>
                 <InputLabel for="target_audience" value="Público-alvo" required
@@ -91,16 +95,19 @@ props.form.end_at = prefillEnd
                         {{ p }}
                     </label>
                 </div>
+                <InputError :message="form.errors.target_audience" />
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
                 <input v-model="form.others_audience"
                        class="textInput w-full text-tiny" placeholder="Publico-Alvo Outros"/>
+                <InputError :message="form.errors.others_audience" />
             </div>
             <div>
                 <input v-model="form.estimated_audience"
                        class="textInput w-full text-tiny" placeholder="Estimativa de participantes"/>
+                <InputError :message="form.errors.estimated_audience" />
             </div>
             <div></div>
         </div>
@@ -108,9 +115,13 @@ props.form.end_at = prefillEnd
         <h2 class="text-sm font-semibold text-slate-700">- Sobre o Evento</h2>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
             <textarea v-model="form.objective" class="textInput w-full text-tiny h-20" placeholder="Objetivo *" />
+            <InputError :message="form.errors.objective" />
             <textarea v-model="form.activities" class="textInput w-full text-tiny h-20" placeholder="Atividades previstas *" />
+            <InputError :message="form.errors.activities" />
             <textarea v-model="form.resources" class="textInput w-full text-tiny h-20" placeholder="Recursos necessários *" />
+            <InputError :message="form.errors.resource" />
             <textarea v-model="form.responsibles" class="textInput w-full text-tiny h-20" placeholder="Responsáveis pela execução *" />
+            <InputError :message="form.errors.responsibles" />
         </div>
 
         <h2 class="text-sm font-semibold text-slate-700">- Itens Especiais do Evento</h2>
@@ -121,6 +132,7 @@ props.form.end_at = prefillEnd
                 <option :value="true">Sim</option>
                 <option :value="false">Não</option>
             </select>
+            <InputError :message="form.errors.with_snack" />
         </div>
 
         <textarea
@@ -129,6 +141,7 @@ props.form.end_at = prefillEnd
             class="textInput w-full text-tiny h-20"
             placeholder="Qual lanche/alimentação?"
         />
+        <InputError :message="form.errors.snack_description" />
 
         <div>
             <label class="text-sm font-bold">Haverá brinde ou premiação?</label>
@@ -137,6 +150,7 @@ props.form.end_at = prefillEnd
                 <option :value="true">Sim</option>
                 <option :value="false">Não</option>
             </select>
+            <InputError :message="form.errors.with_gift" />
         </div>
 
         <textarea
@@ -145,6 +159,7 @@ props.form.end_at = prefillEnd
             class="textInput w-full text-tiny h-20"
             placeholder="Quais brindes/premiações?"
         />
+        <InputError :message="form.errors.gift_description" />
 
         <!-- CONTRIBUIÇÃO -->
         <div>
@@ -154,6 +169,7 @@ props.form.end_at = prefillEnd
                 <option :value="true">Sim</option>
                 <option :value="false">Não</option>
             </select>
+            <InputError :message="form.errors.with_contribution" />
         </div>
         <textarea
             v-if="form.with_contribution"
@@ -161,5 +177,6 @@ props.form.end_at = prefillEnd
             class="textInput w-full text-tiny h-20"
             placeholder="Descrever solicitação/contribuição"
         />
+        <InputError :message="form.errors.contribution_description" />
     </div>
 </template>

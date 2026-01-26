@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 import InputLabel from '@/components/InputLabel.vue'
+import InputError from "@/components/InputError.vue";
 
 const props = defineProps<{
     form: any
@@ -32,6 +33,7 @@ watch(
                     :disabled="readonly"
                     class="textInput w-full text-tiny"
                 />
+                <InputError :message="form.errors.name" />
             </div>
             <div>
                 <InputLabel for="email" value="E-Mail"
@@ -41,6 +43,7 @@ watch(
                     :disabled="readonly"
                     class="textInput w-full text-tiny"
                 />
+                <InputError :message="form.errors.email" />
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -52,6 +55,7 @@ watch(
                     :disabled="readonly"
                     class="textInput w-full text-tiny"
                 />
+                <InputError :message="form.errors.function" />
             </div>
             <div>
                 <InputLabel for="sector" value="Setor"
@@ -61,6 +65,7 @@ watch(
                     :disabled="readonly"
                     class="textInput w-full text-tiny"
                 />
+                <InputError :message="form.errors.sector" />
             </div>
             <div>
                 <InputLabel for="phone" value="WhatsApp/Telefone"
@@ -71,6 +76,7 @@ watch(
                     class="textInput w-full text-tiny"
                 />
             </div>
+            <InputError :message="form.errors.phone" />
         </div>
         <div class="mt-4 pt-4 border-t">
             <p class="text-sm font-semibold text-gray-700 mb-2">

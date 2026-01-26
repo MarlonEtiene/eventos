@@ -1,8 +1,9 @@
 <script setup lang="ts">
 
-import {ref} from "vue";
+import { ref } from "vue";
 import RequestAttachments from "@/pages/components/RequestAttachments.vue";
 import InputError from "@/components/InputError.vue";
+import { usePage } from "@inertiajs/vue3";
 
 const props = defineProps<{
     form: any
@@ -10,6 +11,8 @@ const props = defineProps<{
 }>()
 
 const previews = ref<string[]>([])
+const page = usePage()
+const prefillDeliveryDate = page.props.prefillDeliveryDate as string | null
 
 const serviceTypes = [
     'Cobertura de evento (foto/vídeo)',
@@ -20,6 +23,8 @@ const serviceTypes = [
     'Resenha de texto',
     'Outros',
 ]
+
+props.form.delivery_date = prefillDeliveryDate;
 
 function handleFiles(e: Event) {
     const input = e.target as HTMLInputElement
@@ -52,59 +57,37 @@ function handleFiles(e: Event) {
                 class="textInput w-full text-tiny"
                 placeholder="Descreva o tipo de serviço"
             />
+            <InputError :message="form.errors.communication_type_other" />
 
             <!-- Título -->
-            <input v-model="form.title" class="textInput w-full text-tiny" placeholder="Título da solicitação *" />
-            <InputError :message="form.errors.title" />
+            <textarea
+                v-model="form.art_image_text"
+                class="textInput w-full text-tiny h-28"
+                placeholder="Em caso de solicitação de artes, qual texto deve constar na imagem?"
+            />
+            <InputError :message="form.errors.art_image_text" />
 
             <!-- Início -->
-            <label class="text-sm text-slate-600">Início do evento / ação *</label>
-            <input
-                type="datetime-local"
-                v-model="form.start_at"
-                class="textInput w-full text-tiny"
-            />
-            <InputError :message="form.errors.start_at" />
-
-            <!-- Fim -->
-            <label class="text-sm text-slate-600">Término do evento / ação *</label>
-            <input
-                type="datetime-local"
-                v-model="form.end_at"
-                class="textInput w-full text-tiny"
-            />
-            <InputError :message="form.errors.end_at" />
-
-            <!-- Público-alvo -->
-            <input
-                v-model="form.target_audience"
-                class="textInput w-full text-tiny"
-                placeholder="Público-alvo *"
-            />
-            <InputError :message="form.errors.target_audience" />
-
-            <!-- Texto da peça -->
-            <textarea
-                v-model="form.message"
-                class="textInput w-full text-tiny h-28"
-                placeholder="Texto que deve constar na peça *"
-            />
-            <InputError :message="form.errors.message" />
-
-            <!-- Data de entrega -->
-            <input
-                type="date"
-                v-model="form.delivery_date"
-                class="textInput w-full text-tiny"
-            />
-            <InputError :message="form.errors.delivery_date" />
+            <div>
+                <label class="text-sm text-slate-600">Data de entrega desejada *</label>
+                <input
+                    type="date"
+                    v-model="form.delivery_date"
+                    class="textInput w-full text-tiny"
+                />
+                <InputError :message="form.errors.delivery_date" />
+            </div>
 
             <!-- Anexos -->
-            <RequestAttachments
-                v-model="form.attachments"
-                :max-files="5"
-                :max-size-mb="10"
-            />
+            <div>
+                <span class="text-sm font-semibold text-slate-700">Referências ou exemplos de peças (opcional)</span>
+                <RequestAttachments
+                    v-model="form.attachments"
+                    :max-files="5"
+                    :max-size-mb="10"
+                />
+                <InputError :message="form.errors.attachments" />
+            </div>
 
             <!-- Observações -->
             <textarea
@@ -112,6 +95,21 @@ function handleFiles(e: Event) {
                 class="textInput w-full text-tiny h-28"
                 placeholder="Informações adicionais ou observações (opcional)"
             />
+            <InputError :message="form.errors.observations" />
+
+            <div>
+<!--                <h2 class="font-semibold text-slate-700">
+                    Declaração do Solicitante
+                </h2>-->
+                <label class="flex items-start gap-2 text-sm text-slate-700">
+                    <input
+                        type="checkbox"
+                        v-model="form.declaration"
+                        class="mt-1"
+                    />
+                    Estou ciente de que os pedidos à área de Comunicação devem ser feitos com antecedência mínima de 7 (sete) dias.
+                </label>
+            </div>
         </div>
     </div>
 </template>

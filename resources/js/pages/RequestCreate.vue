@@ -61,9 +61,8 @@ const form = useForm({
     // 3 - Comunicação
     communication_type: '',
     communication_type_other: '',
-
+    art_image_text: '',
     delivery_date: '',
-    observations: '',
 
     attachments: [] as File[],
 
@@ -79,10 +78,10 @@ const canSubmit = computed(() => {
 })
 
 const submitForm = () => {
-    console.log(form);
+    console.log(form.data());
 }
 
-function handleEventDecision(value: boolean) {
+function handleEventDecision(value: boolean|null) {
     form.has_event = value
     flowResolved.value = true
 
