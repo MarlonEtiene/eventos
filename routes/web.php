@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Applicant\CommunicationFormController;
 use App\Http\Controllers\Applicant\DashboardController;
-use App\Http\Controllers\Applicant\EventFormController;
+use App\Http\Controllers\Applicant\RequestController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MagicLinkController;
 use App\Http\Controllers\ProfileController;
@@ -38,8 +38,7 @@ Route::middleware(['auth', 'role:applicant'])
         Route::resource('/dashboard', DashboardController::class)
             ->names('applicant.dashboard');
 
-        Route::resource('/event-requests', EventFormController::class);
-        Route::resource('/communication-requests', CommunicationFormController::class);
+        Route::resource('/request', RequestController::class);
 
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

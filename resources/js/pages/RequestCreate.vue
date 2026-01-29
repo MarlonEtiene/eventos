@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useForm, router, usePage } from '@inertiajs/vue3';
 import RequestSteps from '@/pages/applicant/RequestSteps.vue'
 import InstitutionalHeader from "@/pages/partials/InstitutionalHeader.vue";
 import ApplicantSection from "@/pages/applicant/Partials/ApplicantSection.vue";
 import EventSection from "@/pages/applicant/Partials/EventSection.vue";
 import CommunicationSection from "@/pages/applicant/Partials/CommunicationSection.vue";
+
+const page = usePage()
+const requestData = page.props.request_data
+const readOnly = page.props.read_only
+
+onMounted(() => {
+    console.log(requestData);
+});
 
 const step = ref(1)
 //const disabledSteps = ref<number[]>([])
@@ -28,46 +36,52 @@ const disabledSteps = computed(() => {
 
 const form = useForm({
     // identificação
-    email: '',
-    name: '',
-    function: '',
-    sector: '',
-    phone: '',
+    email: requestData?.email ?? '',
+    name: requestData?.name ?? '',
+    function: requestData?.function ?? '',
+    sector: requestData?.sector ?? '',
+    phone: requestData?.phone ?? '',
 
     // decisão
-    has_event: null,
+    has_event: requestData?.has_event ? Boolean(requestData.has_event) : null,
 
     // 2 - Evento
-    title: '',
-    start_at: '',
-    end_at: '',
-    location: null,
-    target_audience: [] as string[],
-    others_audience: '',
-    estimated_audience: '',
+    title: requestData?.title ?? '',
+    start_at: requestData?.start_at ?? '',
+    end_at: requestData?.end_at ?? '',
+    local_id: requestData?.local_id ?? null,
+    target_audience: requestData?.target_audience ?? [] as string[],
+    others_audience: requestData?.others_audience ?? '',
+    estimated_audience: requestData?.estimated_audience ?? '',
+
     // 2.1 - Sobre o Evento
-    objective: '',
-    activities: '',
-    resources: '',
-    responsibles: '',
+    objective: requestData?.objective ?? '',
+    activities: requestData?.activities ?? '',
+    resources: requestData?.resources ?? '',
+    responsibles: requestData?.responsibles ?? '',
+
     // 2.2 - Itens especiais
-    with_snack: null as null | boolean,
-    snack_description: '',
-    with_gift: null as null | boolean,
-    gift_description: '',
-    with_contribution: null as null | boolean,
-    contribution_description: '',
+    with_snack: requestData?.with_snack ? Boolean(requestData?.with_snack) : null,
+    snack_description: requestData?.snack_description ?? '',
+
+    with_gift: requestData?.with_gift ? Boolean(requestData?.with_gift) : null,
+    gift_description: requestData?.gift_description ?? '',
+
+    with_contribution: requestData?.with_contribution ? Boolean(requestData?.with_contribution) : null,
+    contribution_description: requestData?.contribution_description ?? '',
 
     // 3 - Comunicação
-    communication_type: '',
-    communication_type_other: '',
-    art_image_text: '',
-    delivery_date: '',
+    communication_type_id: requestData?.communication_type_id ?? '',
+    communication_type_other: requestData?.communication_type_other ?? '',
+    art_image_text: requestData?.art_image_text ?? '',
+    delivery_date: requestData?.delivery_date ?? '',
 
     attachments: [] as File[],
 
+    // Ciente
+    aware: Boolean(requestData?.aware) ?? false,
     // Declaração
-    declaration: false,
+    declaration: Boolean(requestData?.declaration) ?? false,
 })
 
 const canSubmit = computed(() => {
@@ -77,9 +91,59 @@ const canSubmit = computed(() => {
     )
 })
 
+const stepFields: Record<number, string[]> = {
+    1: ['name', 'email', 'function', 'sector', 'phone', 'has_event'],
+    2: [
+        'title',
+        'start_at',
+        'end_at',
+        'local_id',
+        'target_audience',
+        'estimated_audience',
+        'objective',
+        'activities',
+        'resources',
+        'responsibles',
+        'with_snack',
+        'snack_description',
+        'with_gift',
+        'gift_description',
+        'with_contribution',
+        'contribution_description',
+    ],
+    3: [
+        'communication_type_id',
+        'communication_type_other',
+        'art_image_text',
+        'delivery_date',
+        'aware'
+    ],
+}
+
 const submitForm = () => {
     console.log(form.data());
+    form.post(route('request.store'));
 }
+
+watch(
+    () => page.props.errors,
+    (errors) => {
+        if (!errors || Object.keys(errors).length === 0) return
+
+
+// descobrir o primeiro step que contém erro
+        const firstErrorStep = Object.entries(stepFields)
+            .find(([_, fields]) =>
+                fields.some(field => errors[field])
+            )?.[0]
+
+
+        if (firstErrorStep) {
+            step.value = Number(firstErrorStep)
+        }
+    },
+    { deep: true }
+)
 
 function handleEventDecision(value: boolean|null) {
     form.has_event = value
@@ -93,6 +157,33 @@ function handleEventDecision(value: boolean|null) {
         step.value = 3
     }
 }
+
+/*const errorSteps = computed(() => {
+    const errors = page.props.errors || {}
+    return Object.entries(stepFields)
+        .filter(([_, fields]) =>
+            fields.some(field => errors[field])
+        )
+        .map(([step]) => Number(step))
+})*/
+
+const errorSteps = computed(() => {
+    const errors = page.props.errors || {}
+
+    return Object.entries(stepFields)
+        .filter(([step, fields]) => {
+            const stepNumber = Number(step)
+
+            // 🔑 IGNORA steps desabilitados
+            if (disabledSteps.value.includes(stepNumber)) {
+                return false
+            }
+
+            return fields.some(field => errors[field])
+        })
+        .map(([step]) => Number(step))
+})
+
 </script>
 
 <template>
@@ -105,14 +196,22 @@ function handleEventDecision(value: boolean|null) {
         />
 
         <div class="max-w-3xl mx-auto bg-white rounded-xl shadow p-4 space-y-4 mt-2">
+            <div
+                v-if="Object.keys($page.props.errors || {}).length"
+                class="hidden md:block mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-sm text-red-700"
+            >
+                Existem erros no formulário. Verifique os campos destacados nos passos abaixo.
+            </div>
             <RequestSteps
                 v-model="step"
                 :disabled-steps="disabledSteps"
                 :flow-resolved="form.has_event !== null"
+                :error-steps="errorSteps"
             >
                 <template #step-1>
                     <ApplicantSection :form="form"
                                       @decide-event="handleEventDecision"
+                                      :readonly="readOnly"
                     />
                 </template>
 
@@ -151,7 +250,7 @@ function handleEventDecision(value: boolean|null) {
                     Dashboard
                 </button>
 
-                <button
+                <button v-if="!readOnly"
                     @click="submitForm"
                     :disabled="!canSubmit"
                     class="ml-auto px-4 py-2 md:px-6 md:py-3 rounded-lg text-white transition

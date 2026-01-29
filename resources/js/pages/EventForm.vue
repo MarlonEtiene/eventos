@@ -63,7 +63,7 @@ const publicos = [
 ]
 
 const submit = () => {
-    form.post(route('event-requests.store'));
+    form.post(route('request.store'));
 }
 </script>
 

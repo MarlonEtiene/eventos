@@ -75,8 +75,8 @@ watch(
                     :disabled="readonly"
                     class="textInput w-full text-tiny"
                 />
+                <InputError :message="form.errors.phone" />
             </div>
-            <InputError :message="form.errors.phone" />
         </div>
         <div class="mt-4 pt-4 border-t">
             <p class="text-sm font-semibold text-gray-700 mb-2">

@@ -5,6 +5,7 @@ const props = defineProps<{
     modelValue: number
     disabledSteps?: number[]
     flowResolved?: boolean
+    errorSteps?: number[]
 }>()
 
 const emit = defineEmits(['update:modelValue'])
@@ -72,11 +73,12 @@ function previousStep() {
                 <span
                     v-for="step in steps"
                     :key="step.id"
-                    class="h-2 w-2 rounded-full transition"
-                    :class="step.id === currentStep
-                    ? 'bg-blue-600 scale-125'
-                    : 'bg-gray-300'
-                  "
+                    class="relative h-2 w-2 rounded-full transition"
+                    :class="[
+                        step.id === currentStep && 'bg-blue-600 scale-125',
+                        step.id !== currentStep && !errorSteps?.includes(step.id) && 'bg-gray-300',
+                        errorSteps?.includes(step.id) && 'bg-red-500'
+                    ]"
                 />
             </div>
 
@@ -87,6 +89,12 @@ function previousStep() {
                 </p>
                 <p class="font-semibold text-gray-800">
                     {{ current?.label }}
+                </p>
+                <p
+                    v-if="errorSteps?.includes(currentStep)"
+                    class="text-xs text-red-600 mt-1"
+                >
+                    Existem campos obrigatórios neste passo
                 </p>
             </div>
         </div>
@@ -102,7 +110,8 @@ function previousStep() {
                     step.id === currentStep
                         ? 'bg-blue-600 text-white border-blue-600'
                         : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50',
-                    isDisabled(step.id) && 'opacity-40 cursor-not-allowed pointer-events-none'
+                    isDisabled(step.id) && 'opacity-40 cursor-not-allowed',
+                    props.errorSteps?.includes(step.id) && 'border-red-500 text-red-600'
                 ]"
             >
                 {{ step.label }}

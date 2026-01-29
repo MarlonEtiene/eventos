@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Applicant;
 
 use App\Http\Controllers\Controller;
-use App\Models\CommunicationForm;
-use App\Models\EventForm;
 use App\Models\Request;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -14,36 +11,34 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $requests = Request::where('requester_id', Auth::id())
+        $requests = Request::query()
+            ->where('requester_id', Auth::id())
             ->orderByDesc('created_at')
             ->select([
                 'id',
                 'status',
                 'created_at',
-                'requestable_id',
-                'requestable_type',
+                'has_event',
+                'title',
+                'start_at',
+                'delivery_date',
             ])
-            ->selectRaw("
-                CASE
-                    WHEN requestable_type = 'App\\\\Models\\\\EventForm'
-                        THEN 'event'
-                    ELSE 'communication'
-                END AS type
-            ")
-            ->with([
-                'requestable' => function (MorphTo $morphTo) {
-                    $morphTo->constrain([
-                        EventForm::class => function ($query) {
-                            $query->select('id', 'title', 'start_at');
-                        },
-                        CommunicationForm::class => function ($query) {
-                            $query->select('id', 'title', 'start_at');
-                        },
-                    ]);
-                }
-            ])
-            ->get();
+            ->get()
+            ->map(function ($request) {
+                return [
+                    'id' => $request->id,
+                    'status' => $request->status,
+                    'created_at' => $request->created_at,
+                    'type' => $request->has_event ? 'event' : 'communication',
+                    'title' => $request->has_event
+                        ? $request->title
+                        : 'Solicitação de Comunicação',
 
+                    'date' => $request->has_event
+                        ? $request->start_at
+                        : $request->delivery_date,
+                ];
+            });
         return Inertia::render('applicant/Dashboard', [
             'requests' => $requests,
         ]);

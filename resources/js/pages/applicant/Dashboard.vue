@@ -76,7 +76,7 @@ const calendarOptions = {
 
 function eventContent(arg) {
     const view = arg.view.type
-    const start = arg.event.start
+    const start = arg.start
 
     const time = start
         ? start.toLocaleTimeString('pt-BR', {
@@ -96,13 +96,12 @@ function eventContent(arg) {
 
         const titleEl = document.createElement('div')
         titleEl.className = 'fc-event-title'
-        titleEl.innerText = arg.event.title
+        titleEl.innerText = arg.title
 
         container.appendChild(timeEl)
         container.appendChild(titleEl)
     } else {
-        // WEEK / DAY
-        container.innerText = `${time} – ${arg.event.title}`
+        container.innerText = `${time} – ${arg.title}`
     }
 
     return { domNodes: [container] }
@@ -112,7 +111,7 @@ function eventContent(arg) {
 /* Redirecionamentos */
 const goToEvent = () => {
     showChoiceModal.value = false
-    router.visit(route('event-requests.create', {
+    router.visit(route('request.create', {
         date: selectedDate.value,
         start: selectedStartTime.value,
     }))
@@ -163,21 +162,21 @@ const goToEvent = () => {
                     class="bg-white rounded-xl shadow p-4 flex justify-between items-center"
                 >
                     <div>
-                        <span
+<!--                        <span
                             class="text-xs font-semibold px-2 py-1 rounded"
                             :class="r.type === 'event'
                                 ? 'bg-indigo-100 text-indigo-800'
                                 : 'bg-emerald-100 text-emerald-800'"
                         >
                             {{ r.type === 'event' ? 'Evento' : 'Comunicação' }}
-                        </span>
+                        </span>-->
 
                         <p class="mt-1 text-sm font-medium text-slate-700">
-                            {{ r.requestable.title }}
+                            {{ r.title }}
                         </p>
 
                         <p class="text-xs text-slate-400">
-                            {{ formatDate(r.requestable.start_at, null, 'DD/MM/YYYY HH:mm') }}
+                            {{ formatDate(r.date, null, 'DD/MM/YYYY HH:mm') }}
                         </p>
                     </div>
 
@@ -190,7 +189,7 @@ const goToEvent = () => {
                         </span>
 
                         <Link
-                            :href="route('event-requests.show', r.id)"
+                            :href="route('request.show', r.id)"
                             class="block text-xs text-blue-600 hover:underline"
                         >
                             Visualizar

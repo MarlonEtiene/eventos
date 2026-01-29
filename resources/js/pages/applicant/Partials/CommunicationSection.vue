@@ -13,16 +13,7 @@ const props = defineProps<{
 const previews = ref<string[]>([])
 const page = usePage()
 const prefillDeliveryDate = page.props.prefillDeliveryDate as string | null
-
-const serviceTypes = [
-    'Cobertura de evento (foto/vídeo)',
-    'Criação de arte (digital)',
-    'Divulgação pré-evento',
-    'Divulgação pós-evento',
-    'Produção gráfica',
-    'Resenha de texto',
-    'Outros',
-]
+const serviceTypes = page.props.comm_types
 
 props.form.delivery_date = prefillDeliveryDate;
 
@@ -41,15 +32,13 @@ function handleFiles(e: Event) {
 
 <template>
     <div class="p-2 space-y-3">
-        <h2 class="text-sm font-semibold text-slate-700">- Solicitação de Evento</h2>
+        <h2 class="text-sm font-semibold text-slate-700">- Solicitação de Comunicação</h2>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
-            <select v-model="form.communication_type" class="textInput w-full text-tiny">
+            <select v-model="form.communication_type_id" class="textInput w-full text-tiny">
                 <option value="">Tipo de serviço solicitado *</option>
-                <option v-for="t in serviceTypes" :key="t" :value="t">
-                    {{ t }}
-                </option>
+                <option v-for="l in serviceTypes" :value="l.id">{{ l.name }}</option>
             </select>
-            <InputError :message="form.errors.communication_type" />
+            <InputError :message="form.errors.communication_type_id" />
 
             <input
                 v-if="form.communication_type === 'Outros'"
@@ -98,17 +87,15 @@ function handleFiles(e: Event) {
             <InputError :message="form.errors.observations" />
 
             <div>
-<!--                <h2 class="font-semibold text-slate-700">
-                    Declaração do Solicitante
-                </h2>-->
                 <label class="flex items-start gap-2 text-sm text-slate-700">
                     <input
                         type="checkbox"
-                        v-model="form.declaration"
+                        v-model="form.aware"
                         class="mt-1"
                     />
                     Estou ciente de que os pedidos à área de Comunicação devem ser feitos com antecedência mínima de 7 (sete) dias.
                 </label>
+                <InputError :message="form.errors.aware" />
             </div>
         </div>
     </div>
