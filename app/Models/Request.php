@@ -40,6 +40,7 @@ class Request extends Model implements Auditable
         'communication_type_other',
         'art_image_text',
         'delivery_date',
+        'aware',
         'declaration',
         'status',
         'admin_reviewed_by',

@@ -3,9 +3,18 @@
 namespace App\Http\Requests\Applicant;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ApplicantRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'communication_type_id' =>
+                $this->communication_type_id === '' ? null : $this->communication_type_id,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -20,35 +29,47 @@ class ApplicantRequest extends FormRequest
             'has_event' => ['required', 'boolean'],
 
             // Evento (somente se has_event = true)
-            'title' => ['required_if:has_event,true', 'string'],
+            'title' => ['required_if:has_event,true'],
             'start_at' => ['required_if:has_event,true', 'date'],
             'end_at' => ['required_if:has_event,true', 'date'],
             'local_id' => ['required_if:has_event,true'],
             'target_audience' => ['required_if:has_event,true', 'array'],
             'target_audience.*' => ['exists:audiences,id'],
-            'estimated_audience' => ['required_if:has_event,true', 'numeric'],
+            'estimated_audience' => ['required_if:has_event,true'],
 
-            'objective' => ['required_if:has_event,true', 'string'],
-            'activities' => ['required_if:has_event,true', 'string'],
-            'resources' => ['required_if:has_event,true', 'string'],
-            'responsibles' => ['required_if:has_event,true', 'string'],
+            'objective' => ['required_if:has_event,true'],
+            'activities' => ['required_if:has_event,true'],
+            'resources' => ['required_if:has_event,true'],
+            'responsibles' => ['required_if:has_event,true'],
 
-            'with_snack' => ['required_if:has_event,true', 'boolean'],
+            'with_snack' => ['required_if:has_event,true'],
             'snack_description' => ['required_if:with_snack,true'],
 
-            'with_gift' => ['required_if:with_gift,true', 'boolean'],
+            'with_gift' => ['required_if:with_gift,true'],
             'gift_description' => ['required_if:with_gift,true'],
 
-            'with_contribution' => ['required_if:has_event,true', 'boolean'],
+            'with_contribution' => ['required_if:has_event,true'],
             'contribution_description' => ['required_if:with_contribution,true'],
 
             // Comunicação
-            'communication_type' => ['sometimes'],
+            'communication_type_id' => ['nullable', 'integer'],
             #communication_type_other
             #art_image_text
             'delivery_date' => ['required', 'date'],
-            'aware' => ['required_with:communication_type', 'accepted'],
-            #attachments
+            'aware' => [
+                Rule::when(
+                    !is_null($this->communication_type_id)
+                    && (int) $this->communication_type_id > 0,
+                    ['required', 'accepted'],
+                    ['nullable']
+                ),
+            ],
+            'attachments' => ['nullable', 'array', 'max:5'],
+            'attachments.*' => [
+                'file',
+                'mimes:jpg,jpeg,png,webp,pdf',
+                'max:10240', // 10MB em KB
+            ],
             #declaration
         ];
     }
@@ -60,7 +81,7 @@ class ApplicantRequest extends FormRequest
 
     public function attributes(): array
     {
-        return [
+        $attributes = [
             'name' => 'Nome',
             'email' => 'E-Mail',
             'function' => 'Função',
@@ -79,6 +100,23 @@ class ApplicantRequest extends FormRequest
             'with_snack' => 'Haverá Lanche',
             'with_gift' => 'Haverá Brinde',
             'with_contribution' => 'Haverá Solicitação de Recursos',
+            'attachments' => 'Arquivos anexados',
+        ];
+
+        if ($this->hasFile('attachments')) {
+            foreach ($this->file('attachments') as $index => $file) {
+                $attributes["attachments.$index"] = 'Arquivo ' . ($index + 1);
+            }
+        }
+
+        return $attributes;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'attachments.*.mimes' => 'Formato de arquivo não permitido. Tipos aceitos: jpg, jpeg, png, webp, pdf.',
+            'attachments.*.max'   => 'O arquivo :attribute excede o tamanho máximo permitido (10MB).',
         ];
     }
 }

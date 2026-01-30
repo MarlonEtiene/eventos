@@ -35,8 +35,8 @@ return new class extends Migration
              * Dados do evento
              */
             $table->string('title')->nullable();
-            $table->timestamp('start_at')->nullable();
-            $table->timestamp('end_at')->nullable();
+            $table->dateTime('start_at')->nullable();
+            $table->dateTime('end_at')->nullable();
 
             $table->foreignId('local_id')->nullable();
 
@@ -64,10 +64,14 @@ return new class extends Migration
             /**
              * Comunicação
              */
-            $table->string('communication_type')->nullable();
+            $table->foreignId('communication_type_id')
+                ->nullable()
+                ->constrained('communication_types')
+                ->after('contribution_description');
+
             $table->string('communication_type_other')->nullable();
             $table->text('art_image_text')->nullable();
-            $table->timestamp('delivery_date')->nullable();
+            $table->date('delivery_date')->nullable();
 
             /**
              * Ciente
@@ -91,7 +95,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users');
 
-            $table->timestamp('admin_reviewed_at')->nullable();
+            $table->dateTime('admin_reviewed_at')->nullable();
             $table->text('admin_rejection_reason')->nullable();
 
             /**
@@ -101,7 +105,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users');
 
-            $table->timestamp('direction_reviewed_at')->nullable();
+            $table->dateTime('direction_reviewed_at')->nullable();
             $table->text('direction_rejection_reason')->nullable();
 
             $table->timestamps();

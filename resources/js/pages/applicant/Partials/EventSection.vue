@@ -10,13 +10,8 @@ const props = defineProps<{
 }>()
 
 const page = usePage()
-const prefillStart = page.props.prefillStart as string | null
-const prefillEnd = page.props.prefillEnd as string | null
 const locals = page.props.locals
 const audiences = page.props.audiences
-
-props.form.start_at = prefillStart
-props.form.end_at = prefillEnd
 
 </script>
 
@@ -38,13 +33,21 @@ props.form.end_at = prefillEnd
             <div>
                 <InputLabel for="start_at" value="Data/Hora de Início"
                             class="text-tiny overflow-hidden text-ellipsis whitespace-nowra mt-1" />
-                <input type="datetime-local" v-model="form.start_at" class="textInput w-full text-tiny" />
+                <input
+                    type="datetime-local"
+                    v-model="form.start_at"
+                    :readonly="readonly"
+                    class="textInput w-full text-tiny" />
                 <InputError :message="form.errors.start_at" />
             </div>
             <div>
                 <InputLabel for="end_at" value="Data/Hora de Fim"
                             class="text-tiny overflow-hidden text-ellipsis whitespace-nowra mt-1" />
-                <input type="datetime-local" v-model="form.end_at" class="textInput w-full text-tiny" />
+                <input
+                    type="datetime-local"
+                    v-model="form.end_at"
+                    :readonly="readonly"
+                    class="textInput w-full text-tiny" />
                 <InputError :message="form.errors.end_at" />
             </div>
         </div>
@@ -55,7 +58,9 @@ props.form.end_at = prefillEnd
                         class="textInput w-full text-tiny"
                 >
                     <option :value="null" disabled>Selecione o local</option>
-                    <option v-for="l in locals" :value="l.id">{{ l.name }}</option>
+                    <option v-for="l in locals" :value="l.id">
+                        {{ l.name }}
+                    </option>
                 </select>
                 <InputError :message="form.errors.local_id" />
             </div>
@@ -65,7 +70,11 @@ props.form.end_at = prefillEnd
                 />
                 <div class="grid grid-cols-3 gap-2 mt-1">
                     <label v-for="p in audiences" :key="p.id" class="flex items-center gap-2 text-tiny">
-                        <input type="checkbox" :value="p.id" v-model="form.target_audience" />
+                        <input
+                            type="checkbox"
+                            :value="p.id"
+                            :disabled="readonly"
+                            v-model="form.target_audience" />
                         {{ p.name }}
                     </label>
                 </div>
@@ -74,13 +83,21 @@ props.form.end_at = prefillEnd
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-                <input v-model="form.others_audience"
-                       class="textInput w-full text-tiny" placeholder="Publico-Alvo Outros"/>
+                <input
+                    type="text"
+                    v-model="form.others_audience"
+                    :readonly="readonly"
+                    class="textInput w-full text-tiny"
+                    placeholder="Publico-Alvo Outros"/>
                 <InputError :message="form.errors.others_audience" />
             </div>
             <div>
-                <input v-model="form.estimated_audience"
-                       class="textInput w-full text-tiny" placeholder="Estimativa de participantes"/>
+                <input
+                    type="text"
+                    v-model="form.estimated_audience"
+                    :readonly="readonly"
+                    class="textInput w-full text-tiny"
+                    placeholder="Estimativa de participantes"/>
                 <InputError :message="form.errors.estimated_audience" />
             </div>
             <div></div>
@@ -89,19 +106,35 @@ props.form.end_at = prefillEnd
         <h2 class="text-sm font-semibold text-slate-700">- Sobre o Evento</h2>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
             <div>
-                <textarea v-model="form.objective" class="textInput w-full text-tiny h-20" placeholder="Objetivo *" />
+                <textarea
+                    v-model="form.objective"
+                    class="textInput w-full text-tiny h-20"
+                    :disabled="readonly"
+                    placeholder="Objetivo *" />
                 <InputError :message="form.errors.objective" />
             </div>
             <div>
-                <textarea v-model="form.activities" class="textInput w-full text-tiny h-20" placeholder="Atividades previstas *" />
+                <textarea
+                    v-model="form.activities"
+                    class="textInput w-full text-tiny h-20"
+                    :readonly="readonly"
+                    placeholder="Atividades previstas *" />
                 <InputError :message="form.errors.activities" />
             </div>
             <div>
-                <textarea v-model="form.resources" class="textInput w-full text-tiny h-20" placeholder="Recursos necessários *" />
+                <textarea
+                    v-model="form.resources"
+                    class="textInput w-full text-tiny h-20"
+                    :readonly="readonly"
+                    placeholder="Recursos necessários *" />
                 <InputError :message="form.errors.resources" />
             </div>
             <div>
-                <textarea v-model="form.responsibles" class="textInput w-full text-tiny h-20" placeholder="Responsáveis pela execução *" />
+                <textarea
+                    v-model="form.responsibles"
+                    class="textInput w-full text-tiny h-20"
+                    :readonly="readonly"
+                    placeholder="Responsáveis pela execução *" />
                 <InputError :message="form.errors.responsibles" />
             </div>
         </div>
@@ -109,7 +142,11 @@ props.form.end_at = prefillEnd
         <h2 class="text-base font-semibold text-slate-700">- Itens Especiais do Evento</h2>
         <div>
             <label class="text-sm font-bold">Haverá lanche/alimentação?</label>
-            <select v-model="form.with_snack" class="textInput w-full text-tiny">
+            <select
+                v-model="form.with_snack"
+                :disabled="readonly"
+                class="textInput w-full text-tiny"
+            >
                 <option :value="null" disabled>Selecione</option>
                 <option :value="true">Sim</option>
                 <option :value="false">Não</option>
@@ -121,6 +158,7 @@ props.form.end_at = prefillEnd
             <textarea
                 v-if="form.with_snack"
                 v-model="form.snack_description"
+                :disabled="readonly"
                 class="textInput w-full text-tiny h-20"
                 placeholder="Qual lanche/alimentação?"
             />
@@ -129,7 +167,11 @@ props.form.end_at = prefillEnd
 
         <div>
             <label class="text-sm font-bold">Haverá brinde ou premiação?</label>
-            <select v-model="form.with_gift" class="textInput w-full text-tiny">
+            <select
+                v-model="form.with_gift"
+                :disabled="readonly"
+                class="textInput w-full text-tiny"
+            >
                 <option :value="null" disabled>Selecione</option>
                 <option :value="true">Sim</option>
                 <option :value="false">Não</option>
@@ -140,6 +182,7 @@ props.form.end_at = prefillEnd
             <textarea
                 v-if="form.with_gift"
                 v-model="form.gift_description"
+                :disabled="readonly"
                 class="textInput w-full text-tiny h-20"
                 placeholder="Quais brindes/premiações?"
             />
@@ -149,7 +192,11 @@ props.form.end_at = prefillEnd
         <!-- CONTRIBUIÇÃO -->
         <div>
             <label class="text-sm font-bold">Solicitação de Recursos ou Notificação de Contribuição Externa/Doações</label>
-            <select v-model="form.with_contribution" class="textInput w-full text-tiny">
+            <select
+                v-model="form.with_contribution"
+                :disabled="readonly"
+                class="textInput w-full text-tiny"
+            >
                 <option :value="null" disabled>Haverá solicitação de recursos ou contribuição externa?</option>
                 <option :value="true">Sim</option>
                 <option :value="false">Não</option>
@@ -160,6 +207,7 @@ props.form.end_at = prefillEnd
             <textarea
                 v-if="form.with_contribution"
                 v-model="form.contribution_description"
+                :disabled="readonly"
                 class="textInput w-full text-tiny h-20"
                 placeholder="Descrever solicitação/contribuição"
             />

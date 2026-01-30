@@ -23,18 +23,24 @@ function handleFiles(event: Event) {
 
     if (files.length + props.modelValue.length > maxFiles) {
         error.value = `Máximo de ${maxFiles} arquivos.`
+        emit('update:modelValue', [])
+        input.value = ''
         return
     }
 
     for (const file of files) {
         if (file.size > maxSize) {
-            error.value = `O arquivo "${file.name}" excede 10MB.`
+            error.value = `O arquivo "${file.name}" excede ${props.maxSizeMb ?? 10}MB.`
+            emit('update:modelValue', [])
+            input.value = ''
             return
         }
     }
 
     emit('update:modelValue', [...props.modelValue, ...files])
+    input.value = ''
 }
+
 
 function remove(index: number) {
     const copy = [...props.modelValue]

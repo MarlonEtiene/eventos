@@ -13,8 +13,13 @@ const { formatDate } = formatters();
 
 type Request = {
     id: number
+    name: string
+    email: string
+    function: string
+    sector: string
     type: 'event' | 'communication'
     title: string
+    has_event: boolean
     status: string
     created_at: string
 }
@@ -159,30 +164,43 @@ const goToEvent = () => {
                 <div
                     v-for="r in requests"
                     :key="r.id"
-                    class="bg-white rounded-xl shadow p-4 flex justify-between items-center"
+                    class="bg-white rounded-xl shadow p-4 flex justify-between items-start"
                 >
-                    <div>
-<!--                        <span
-                            class="text-xs font-semibold px-2 py-1 rounded"
-                            :class="r.type === 'event'
-                                ? 'bg-indigo-100 text-indigo-800'
-                                : 'bg-emerald-100 text-emerald-800'"
+                    <div class="space-y-1">
+                        <!-- Tipo -->
+                        <span
+                            class="inline-block text-xs font-semibold px-2 py-1 rounded"
+                            :class="r.type === 'event' ? 'bg-indigo-100 text-indigo-800' : 'bg-emerald-100 text-emerald-800'"
                         >
                             {{ r.type === 'event' ? 'Evento' : 'Comunicação' }}
-                        </span>-->
+                        </span>
 
-                        <p class="mt-1 text-sm font-medium text-slate-700">
+                        <!-- Título -->
+                        <p class="text-sm font-medium text-slate-800 leading-snug">
                             {{ r.title }}
                         </p>
 
+                        <!-- Solicitante -->
+                        <p class="text-xs text-slate-500">
+                            {{ r.name }}
+                            <span v-if="r.function || r.sector">
+                                • {{ r.function }}
+                                <span v-if="r.sector">
+                                    — {{ r.sector }}
+                                </span>
+                            </span>
+                        </p>
+
+                        <!-- Data -->
                         <p class="text-xs text-slate-400">
-                            {{ formatDate(r.date, null, 'DD/MM/YYYY HH:mm') }}
+                            {{ r.has_event  ? formatDate(r.date, null, 'DD/MM/YYYY HH:mm') : formatDate(r.date, null, 'DD/MM/YYYY') }}
                         </p>
                     </div>
 
+                    <!-- Status / ação -->
                     <div class="text-right space-y-1">
                         <span
-                            class="text-xs px-2 py-1 rounded-full font-semibold"
+                            class="inline-block text-xs px-2 py-1 rounded-full font-semibold"
                             :class="statusMap[r.status]"
                         >
                             {{ r.status }}

@@ -12,7 +12,9 @@ const requestData = page.props.request_data
 const readOnly = page.props.read_only
 
 onMounted(() => {
-    console.log(requestData);
+    applyPrefill('start_at', page.props.prefillStart)
+    applyPrefill('end_at', page.props.prefillEnd)
+    applyPrefill('delivery_date', page.props.prefillDeliveryDate)
 });
 
 const step = ref(1)
@@ -43,7 +45,7 @@ const form = useForm({
     phone: requestData?.phone ?? '',
 
     // decisão
-    has_event: requestData?.has_event ? Boolean(requestData.has_event) : null,
+    has_event: nullableBoolean(requestData?.has_event),
 
     // 2 - Evento
     title: requestData?.title ?? '',
@@ -61,13 +63,13 @@ const form = useForm({
     responsibles: requestData?.responsibles ?? '',
 
     // 2.2 - Itens especiais
-    with_snack: requestData?.with_snack ? Boolean(requestData?.with_snack) : null,
+    with_snack: nullableBoolean(requestData?.with_snack),
     snack_description: requestData?.snack_description ?? '',
 
-    with_gift: requestData?.with_gift ? Boolean(requestData?.with_gift) : null,
+    with_gift: nullableBoolean(requestData?.with_gift),
     gift_description: requestData?.gift_description ?? '',
 
-    with_contribution: requestData?.with_contribution ? Boolean(requestData?.with_contribution) : null,
+    with_contribution: nullableBoolean(requestData?.with_contribution),
     contribution_description: requestData?.contribution_description ?? '',
 
     // 3 - Comunicação
@@ -75,6 +77,7 @@ const form = useForm({
     communication_type_other: requestData?.communication_type_other ?? '',
     art_image_text: requestData?.art_image_text ?? '',
     delivery_date: requestData?.delivery_date ?? '',
+    observations: requestData?.observations ?? '',
 
     attachments: [] as File[],
 
@@ -130,13 +133,11 @@ watch(
     (errors) => {
         if (!errors || Object.keys(errors).length === 0) return
 
-
-// descobrir o primeiro step que contém erro
+        // descobrir o primeiro step que contém erro
         const firstErrorStep = Object.entries(stepFields)
             .find(([_, fields]) =>
                 fields.some(field => errors[field])
             )?.[0]
-
 
         if (firstErrorStep) {
             step.value = Number(firstErrorStep)
@@ -144,28 +145,6 @@ watch(
     },
     { deep: true }
 )
-
-function handleEventDecision(value: boolean|null) {
-    form.has_event = value
-    flowResolved.value = true
-
-    if (value) {
-        disabledSteps.value = []
-        step.value = 2
-    } else {
-        disabledSteps.value = [2]
-        step.value = 3
-    }
-}
-
-/*const errorSteps = computed(() => {
-    const errors = page.props.errors || {}
-    return Object.entries(stepFields)
-        .filter(([_, fields]) =>
-            fields.some(field => errors[field])
-        )
-        .map(([step]) => Number(step))
-})*/
 
 const errorSteps = computed(() => {
     const errors = page.props.errors || {}
@@ -183,6 +162,30 @@ const errorSteps = computed(() => {
         })
         .map(([step]) => Number(step))
 })
+
+function handleEventDecision(value: boolean|null) {
+    form.has_event = value
+    flowResolved.value = true
+
+    if (value) {
+        disabledSteps.value = []
+        step.value = 2
+    } else {
+        disabledSteps.value = [2]
+        step.value = 3
+    }
+}
+
+function applyPrefill(field: keyof typeof form, value: string | null) {
+    if (!requestData && value && !form[field]) {
+        form[field] = value
+    }
+}
+
+function nullableBoolean(value: unknown): boolean | null {
+    if (value === null || value === undefined) return null
+    return Boolean(value)
+}
 
 </script>
 
@@ -217,11 +220,14 @@ const errorSteps = computed(() => {
 
                 <template #step-2>
                     <EventSection :form="form"
-                                   @decide-event="handleEventDecision"/>
+                                  @decide-event="handleEventDecision"
+                                  :readonly="readOnly"
+                    />
                 </template>
 
                 <template #step-3>
                     <CommunicationSection :form="form"
+                                          :readonly="readOnly"
                                           @decide-event="handleEventDecision" />
                 </template>
             </RequestSteps>
@@ -236,6 +242,7 @@ const errorSteps = computed(() => {
                     <input
                         type="checkbox"
                         v-model="form.declaration"
+                        :disabled="readOnly"
                         class="mt-1"
                     />
                     Declaro que as informações prestadas são verdadeiras e que o evento/comunicação só será realizado mediante autorização da Direção.

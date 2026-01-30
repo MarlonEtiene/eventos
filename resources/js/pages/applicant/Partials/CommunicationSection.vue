@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref } from "vue";
+import {computed, ref} from "vue";
 import RequestAttachments from "@/pages/components/RequestAttachments.vue";
 import InputError from "@/components/InputError.vue";
 import { usePage } from "@inertiajs/vue3";
@@ -10,12 +10,20 @@ const props = defineProps<{
     readonly?: boolean
 }>()
 
+const attachmentErrors = computed(() => {
+    const errors = props.form.errors || {}
+
+    return Object.entries(errors)
+        .filter(([key]) => key.startsWith('attachments.'))
+        .map(([key, message]) => {
+            const index = Number(key.split('.')[1]) + 1
+            return `Arquivo ${index}: ${message}`
+        })
+})
+
 const previews = ref<string[]>([])
 const page = usePage()
-const prefillDeliveryDate = page.props.prefillDeliveryDate as string | null
 const serviceTypes = page.props.comm_types
-
-props.form.delivery_date = prefillDeliveryDate;
 
 function handleFiles(e: Event) {
     const input = e.target as HTMLInputElement
@@ -34,7 +42,11 @@ function handleFiles(e: Event) {
     <div class="p-2 space-y-3">
         <h2 class="text-sm font-semibold text-slate-700">- Solicitação de Comunicação</h2>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
-            <select v-model="form.communication_type_id" class="textInput w-full text-tiny">
+            <select
+                v-model="form.communication_type_id"
+                :disabled="readonly"
+                class="textInput w-full text-tiny"
+            >
                 <option value="">Tipo de serviço solicitado *</option>
                 <option v-for="l in serviceTypes" :value="l.id">{{ l.name }}</option>
             </select>
@@ -43,6 +55,7 @@ function handleFiles(e: Event) {
             <input
                 v-if="form.communication_type === 'Outros'"
                 v-model="form.communication_type_other"
+                :readonly="readonly"
                 class="textInput w-full text-tiny"
                 placeholder="Descreva o tipo de serviço"
             />
@@ -51,6 +64,7 @@ function handleFiles(e: Event) {
             <!-- Título -->
             <textarea
                 v-model="form.art_image_text"
+                :disabled="readonly"
                 class="textInput w-full text-tiny h-28"
                 placeholder="Em caso de solicitação de artes, qual texto deve constar na imagem?"
             />
@@ -62,6 +76,7 @@ function handleFiles(e: Event) {
                 <input
                     type="date"
                     v-model="form.delivery_date"
+                    :disabled="readonly"
                     class="textInput w-full text-tiny"
                 />
                 <InputError :message="form.errors.delivery_date" />
@@ -75,13 +90,18 @@ function handleFiles(e: Event) {
                     :max-files="5"
                     :max-size-mb="10"
                 />
-                <InputError :message="form.errors.attachments" />
+                <ul v-if="attachmentErrors.length" class="text-sm text-red-600 space-y-1 mt-1">
+                    <li v-for="(msg, i) in attachmentErrors" :key="i">
+                        {{ msg }}
+                    </li>
+                </ul>
             </div>
 
             <!-- Observações -->
             <textarea
                 v-model="form.observations"
                 class="textInput w-full text-tiny h-28"
+                :readonly="readonly"
                 placeholder="Informações adicionais ou observações (opcional)"
             />
             <InputError :message="form.errors.observations" />
@@ -92,6 +112,7 @@ function handleFiles(e: Event) {
                         type="checkbox"
                         v-model="form.aware"
                         class="mt-1"
+                        :disabled="readonly"
                     />
                     Estou ciente de que os pedidos à área de Comunicação devem ser feitos com antecedência mínima de 7 (sete) dias.
                 </label>

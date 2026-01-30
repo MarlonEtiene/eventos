@@ -16,6 +16,10 @@ class DashboardController extends Controller
             ->orderByDesc('created_at')
             ->select([
                 'id',
+                'name',
+                'email',
+                'sector',
+                'function',
                 'status',
                 'created_at',
                 'has_event',
@@ -27,9 +31,14 @@ class DashboardController extends Controller
             ->map(function ($request) {
                 return [
                     'id' => $request->id,
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'sector' => $request->sector,
+                    'function' => $request->function,
                     'status' => $request->status,
                     'created_at' => $request->created_at,
                     'type' => $request->has_event ? 'event' : 'communication',
+                    'has_event' => $request->has_event,
                     'title' => $request->has_event
                         ? $request->title
                         : 'Solicitação de Comunicação',
