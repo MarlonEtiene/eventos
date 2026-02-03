@@ -40,7 +40,7 @@ watch(
                             class="text-sm overflow-hidden text-ellipsis whitespace-nowra mt-1" />
                 <input
                     v-model="form.email"
-                    :disabled="readonly"
+                    :disabled="'true'"
                     class="textInput w-full text-tiny"
                 />
                 <InputError :message="form.errors.email" />

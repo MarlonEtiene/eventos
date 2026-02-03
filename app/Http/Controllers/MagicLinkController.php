@@ -29,7 +29,7 @@ class MagicLinkController extends Controller
             $user = User::firstOrCreate(
                 ['email' => $request->email],
                 [
-                    'name' => $request->email,
+                    'name' => ' ',
                     'password' => bcrypt($request->email),
                 ]
             );

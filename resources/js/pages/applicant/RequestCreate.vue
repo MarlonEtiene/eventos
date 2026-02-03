@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useForm, router, usePage } from '@inertiajs/vue3';
+import { formatters } from "@/composables/formatters";
 import RequestSteps from '@/pages/applicant/RequestSteps.vue'
 import InstitutionalHeader from "@/pages/partials/InstitutionalHeader.vue";
 import ApplicantSection from "@/pages/applicant/Partials/ApplicantSection.vue";
 import EventSection from "@/pages/applicant/Partials/EventSection.vue";
 import CommunicationSection from "@/pages/applicant/Partials/CommunicationSection.vue";
 
+const { nullableBoolean } = formatters();
+
 const page = usePage()
 const requestData = page.props.request_data
+const user = page.props.user
 const readOnly = page.props.read_only
 
 onMounted(() => {
@@ -38,8 +42,8 @@ const disabledSteps = computed(() => {
 
 const form = useForm({
     // identificação
-    email: requestData?.email ?? '',
-    name: requestData?.name ?? '',
+    email: requestData?.email ?? user?.email,
+    name: requestData?.name ?? user?.name,
     function: requestData?.function ?? '',
     sector: requestData?.sector ?? '',
     phone: requestData?.phone ?? '',
@@ -180,11 +184,6 @@ function applyPrefill(field: keyof typeof form, value: string | null) {
     if (!requestData && value && !form[field]) {
         form[field] = value
     }
-}
-
-function nullableBoolean(value: unknown): boolean | null {
-    if (value === null || value === undefined) return null
-    return Boolean(value)
 }
 
 </script>

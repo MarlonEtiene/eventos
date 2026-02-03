@@ -11,7 +11,27 @@ export function formatters() {
         return str;
     }
 
+    const nullableBoolean = (value: unknown): boolean | null => {
+        if (value === null || value === undefined) return null
+        return Boolean(value);
+    }
+
+    const translateStatus = (status: string) => {
+        switch (status) {
+            case 'sended':
+                return 'Enviado'
+            case 'approved':
+                return 'Aprovado'
+            case 'rejected':
+                return 'Reprovado'
+            default:
+                return status
+        }
+    }
+
     return {
         formatDate,
+        nullableBoolean,
+        translateStatus,
     };
 }

@@ -19,6 +19,7 @@ class Request extends Model implements Auditable
         'sector',
         'phone',
         'has_event',
+        'has_communication',
         'title',
         'start_at',
         'end_at',

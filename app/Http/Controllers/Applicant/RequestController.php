@@ -10,6 +10,7 @@ use App\Models\Local;
 use App\Models\Request;
 use Carbon\Carbon;
 use Illuminate\Http\Request as HRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Throwable;
@@ -31,7 +32,7 @@ class RequestController extends Controller
             ->where('active', true)
             ->get(['id', 'name']);
 
-        return Inertia::render('RequestCreate', [
+        return Inertia::render('applicant/RequestCreate', [
             'request_data' => $data,
             'read_only' => true,
             'prefillStart' => $data->start_at,
@@ -75,13 +76,16 @@ class RequestController extends Controller
             ->where('active', true)
             ->get(['id', 'name']);
 
-        return Inertia::render('RequestCreate', [
+        $user = Auth::user();
+
+        return Inertia::render('applicant/RequestCreate', [
             'prefillStart' => $startDateTime?->format('Y-m-d\TH:i'),
             'prefillEnd' => $endDateTime?->format('Y-m-d\TH:i'),
             'prefillDeliveryDate' => $deliveryDate?->format('Y-m-d'),
             'locals' => $locals,
             'audiences' => $audiences,
-            'comm_types' => $commTypes
+            'comm_types' => $commTypes,
+            'user' => $user
         ]);
     }
 
@@ -100,6 +104,12 @@ class RequestController extends Controller
             $data['status'] = 'sended';
             $req = Request::query()
                 ->create($data);
+
+            $user = Auth::user();
+            if(!empty($user->name)) {
+                $user->name = $data['name'];
+                $user->save();
+            }
 
             if ($request->hasFile('attachments')) {
                 foreach ($request->file('attachments') as $file) {

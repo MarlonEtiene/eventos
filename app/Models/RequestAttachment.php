@@ -13,4 +13,10 @@ class RequestAttachment extends Model
         'mime_type',
         'size',
     ];
+
+    protected $appends = ['download_url'];
+    public function getDownloadUrlAttribute()
+    {
+        return route('attachments.download', $this->id);
+    }
 }

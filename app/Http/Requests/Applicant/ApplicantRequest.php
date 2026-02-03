@@ -12,6 +12,8 @@ class ApplicantRequest extends FormRequest
         $this->merge([
             'communication_type_id' =>
                 $this->communication_type_id === '' ? null : $this->communication_type_id,
+            'has_communication' => !is_null($this->communication_type_id)
+                && (int) $this->communication_type_id > 0,
         ]);
     }
 
