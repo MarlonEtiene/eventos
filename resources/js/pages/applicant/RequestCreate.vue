@@ -227,6 +227,7 @@ function applyPrefill(field: keyof typeof form, value: string | null) {
                 <template #step-3>
                     <CommunicationSection :form="form"
                                           :readonly="readOnly"
+                                          :request-data="requestData"
                                           @decide-event="handleEventDecision" />
                 </template>
             </RequestSteps>

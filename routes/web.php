@@ -40,7 +40,7 @@ Route::middleware(['auth', 'role:applicant'])
         Route::resource('/request', ApplicantRequest::class);
     });
 
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', 'role:admin|directorship'])
     ->prefix('/manager')
     ->group(function () {
         Route::resource('/dashboard', AdminDashboard::class)

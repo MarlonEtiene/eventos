@@ -8,6 +8,7 @@ import { usePage } from "@inertiajs/vue3";
 const props = defineProps<{
     form: any
     readonly?: boolean
+    requestData: any
 }>()
 
 const attachmentErrors = computed(() => {
@@ -84,17 +85,49 @@ function handleFiles(e: Event) {
 
             <!-- Anexos -->
             <div>
-                <span class="text-sm font-semibold text-slate-700">Referências ou exemplos de peças (opcional)</span>
-                <RequestAttachments
-                    v-model="form.attachments"
-                    :max-files="5"
-                    :max-size-mb="10"
-                />
-                <ul v-if="attachmentErrors.length" class="text-sm text-red-600 space-y-1 mt-1">
-                    <li v-for="(msg, i) in attachmentErrors" :key="i">
-                        {{ msg }}
-                    </li>
-                </ul>
+                <section v-if="!readonly">
+                    <span class="text-sm font-semibold text-slate-700">Referências ou exemplos de peças (opcional)</span>
+                    <RequestAttachments
+                        v-model="form.attachments"
+                        :max-files="5"
+                        :max-size-mb="10"
+                    />
+                    <ul v-if="attachmentErrors.length" class="text-sm text-red-600 space-y-1 mt-1">
+                        <li v-for="(msg, i) in attachmentErrors" :key="i">
+                            {{ msg }}
+                        </li>
+                    </ul>
+                </section>
+                <!-- ANEXOS -->
+                <section v-else
+                    v-if="requestData.attachments?.length"
+                    class="mt-2 p-4 bg-slate-50 rounded-lg border space-y-2"
+                >
+                    <h3 class="font-semibold text-slate-700">
+                        Anexos enviados
+                    </h3>
+
+                    <ul class="space-y-2 text-sm">
+                        <li
+                            v-for="file in requestData.attachments"
+                            :key="file.id"
+                            class="flex items-center justify-between bg-white border rounded-lg px-3 py-2"
+                        >
+                        <span class="truncate">
+                            {{ file.original_name }}
+                        </span>
+
+                            <a
+                                :href="file.download_url"
+                                target="_blank"
+                                class="text-blue-600 hover:underline text-sm"
+                            >
+                                Download
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+
             </div>
 
             <!-- Observações -->

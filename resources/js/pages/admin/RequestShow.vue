@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { router, useForm, usePage } from '@inertiajs/vue3'
 import { formatters } from "@/composables/formatters";
 import { useRoles } from "@/composables/useRoles";
@@ -15,6 +15,18 @@ const { is } = useRoles();
 
 const page = usePage()
 const requestData = page.props.request_data
+
+const canDecide = computed(() => {
+    if (is('directorship')) {
+        return true;
+    }
+
+    return is('admin') &&
+        nullableBoolean(requestData?.has_communication) === true &&
+        nullableBoolean(requestData?.has_event) === false;
+
+
+});
 
 const form = useForm({
     // identificação
@@ -71,11 +83,19 @@ const form = useForm({
 const step = ref(1)
 
 // define steps desabilitados com base no fluxo real
-const disabledSteps = (() => {
-    if (requestData.has_event === false) return [2]
-    if (requestData.has_event === null) return [2, 3]
-    return []
-})()
+const disabledSteps = computed(() => {
+    const steps: number[] = []
+
+    if (!requestData.has_event) {
+        steps.push(2)
+    }
+
+    if (!requestData.has_communication) {
+        steps.push(3)
+    }
+
+    return steps
+})
 </script>
 
 <template>
@@ -95,23 +115,16 @@ const disabledSteps = (() => {
                         Status da solicitação
                     </h2>
                     <span
-                        class="inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold"
+                        class="inline-block mt-1 px-3 py-1 rounded-full text-lg font-semibold"
                         :class="{
-                            'bg-blue-100 text-blue-700': requestData.status === translateStatus('sended'),
-                            'bg-green-100 text-green-700': requestData.status === translateStatus('approved'),
-                            'bg-red-100 text-red-700': requestData.status === translateStatus('rejected'),
+                            'bg-blue-100 text-blue-700': requestData.status === 'sended',
+                            'bg-green-100 text-green-700': requestData.status === 'approved',
+                            'bg-red-100 text-red-700': requestData.status === 'rejected',
                         }"
                     >
-                        {{ requestData.status }}
+                        {{ translateStatus(requestData.status) }}
                     </span>
                 </div>
-
-                <button
-                    class="text-sm text-slate-600 hover:underline"
-                    @click="router.visit(route('admin.dashboard.index'))"
-                >
-                    Voltar ao Dashboard
-                </button>
             </div>
 
             <!-- STEPS -->
@@ -139,39 +152,10 @@ const disabledSteps = (() => {
                     <CommunicationSection
                         :form="form"
                         readonly
+                        :request-data="requestData"
                     />
                 </template>
             </RequestSteps>
-
-            <!-- ANEXOS -->
-            <section
-                v-if="requestData.attachments?.length"
-                class="mt-6 p-4 bg-slate-50 rounded-lg border space-y-2"
-            >
-                <h3 class="font-semibold text-slate-700">
-                    Anexos enviados
-                </h3>
-
-                <ul class="space-y-2 text-sm">
-                    <li
-                        v-for="file in requestData.attachments"
-                        :key="file.id"
-                        class="flex items-center justify-between bg-white border rounded-lg px-3 py-2"
-                    >
-                        <span class="truncate">
-                            {{ file.original_name }}
-                        </span>
-
-                        <a
-                            :href="file.download_url"
-                            target="_blank"
-                            class="text-blue-600 hover:underline text-sm"
-                        >
-                            Download
-                        </a>
-                    </li>
-                </ul>
-            </section>
 
             <!-- AÇÕES ADMIN -->
             <div class="flex gap-3 pt-4 border-t">
@@ -183,15 +167,24 @@ const disabledSteps = (() => {
                     Dashboard
                 </button>
 
-                <!-- DIREITA -->
+                <!-- REPROVAR -->
                 <button
-                    class="px-4 py-2 rounded-lg bg-red-600 text-white text-sm opacity-50 cursor-not-allowed"
+                    :disabled="!canDecide"
+                    class="px-4 py-2 rounded-lg text-sm transition"
+                    :class="canDecide
+                        ? 'bg-red-600 text-white hover:bg-red-700'
+                        : 'bg-red-300 text-white cursor-not-allowed opacity-60'"
                 >
                     Reprovar
                 </button>
 
+                <!-- APROVAR -->
                 <button
-                    class="px-4 py-2 rounded-lg bg-green-600 text-white text-sm opacity-50 cursor-not-allowed"
+                    :disabled="!canDecide"
+                    class="px-4 py-2 rounded-lg text-sm transition"
+                    :class="canDecide
+                        ? 'bg-green-600 text-white hover:bg-green-700'
+                        : 'bg-green-300 text-white cursor-not-allowed opacity-60'"
                 >
                     Aprovar
                 </button>

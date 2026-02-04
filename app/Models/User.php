@@ -57,4 +57,14 @@ class User extends Authenticatable implements Auditable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function getAllRoles()
+    {
+        return $this->load('roles')->roles->pluck('name');
+    }
+
+    public function getAllRolesAlias()
+    {
+        return $this->load('roles')->roles->pluck('alias');
+    }
 }
