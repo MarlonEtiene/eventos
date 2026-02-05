@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Applicant;
 
+use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Applicant\ApplicantRequest;
 use App\Models\Audience;
@@ -61,7 +62,7 @@ class RequestController extends Controller
             );
 
             $endDateTime = $startDateTime->copy()->addHour();
-            $deliveryDate = $startDateTime->copy()->addDays(7);
+            $deliveryDate = Carbon::now()->addDays(7);
         }
 
         $locals = Local::query()
@@ -95,7 +96,7 @@ class RequestController extends Controller
     public function store(ApplicantRequest $request)
     {
         $data = $request->all();
-        //dd($data);
+        $data = app(Helper::class)->toSnakeCase($data);
         DB::transaction(function () use ($data, $request) {
             $data['start_at'] = Carbon::parse($data['start_at']);
             $data['end_at'] = Carbon::parse($data['end_at']);
@@ -106,7 +107,7 @@ class RequestController extends Controller
                 ->create($data);
 
             $user = Auth::user();
-            if(!empty($user->name)) {
+            if(empty($user->name)) {
                 $user->name = $data['name'];
                 $user->save();
             }

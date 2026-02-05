@@ -1,4 +1,5 @@
 import '../css/app.css';
+import "tippy.js/dist/tippy.css";
 import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/vue3';
@@ -7,6 +8,8 @@ import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { vMaska } from "maska/vue";
+import VueTippy, { tippy } from 'vue-tippy';
 
 import { faPlus, faPencil, faEye, faReply, faFloppyDisk, faTimesCircle, faCheckCircle,
     faPrint, faSort, faSortUp, faSortDown, faPaperPlane, faCircle, faSquareXmark, faUserDoctor,
@@ -29,6 +32,16 @@ void createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(VueTippy, {
+                directive: 'tippy',
+                component: tippy,
+                componentSingleton: 'tippy-singleton',
+                defaultProps: {
+                    placement: 'auto',
+                    allowHTML: true,
+                },
+            })
+            .directive("maska", vMaska)
             .component('fai', FontAwesomeIcon)
             .mount(el);
     },

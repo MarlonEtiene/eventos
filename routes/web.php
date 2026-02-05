@@ -31,6 +31,15 @@ Route::resource('/magic-link', MagicLinkController::class);
 Route::get('/calendar/events', [CalendarController::class, 'index'])
     ->name('calendar.events');
 
+Route::get('/attachments/{attachment}/download', function (
+    \App\Models\RequestAttachment $attachment
+) {
+    return response()->download(
+        storage_path('app/public/' . $attachment->path),
+        $attachment->original_name
+    );
+})->name('attachments.download');
+
 Route::middleware(['auth', 'role:applicant'])
     ->prefix('/applicant')
     ->group(function () {
@@ -47,15 +56,6 @@ Route::middleware(['auth', 'role:admin|directorship'])
             ->names('admin.dashboard');
         Route::resource('/requests', AdminRequest::class)
             ->names('admin.manager');
-
-        Route::get('/attachments/{attachment}/download', function (
-            \App\Models\RequestAttachment $attachment
-        ) {
-           return response()->download(
-               storage_path('app/public/' . $attachment->path),
-               $attachment->original_name
-           );
-        })->name('attachments.download');
     });
 
 

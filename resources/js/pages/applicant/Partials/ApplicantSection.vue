@@ -41,7 +41,7 @@ watch(
                 <input
                     v-model="form.email"
                     :disabled="'true'"
-                    class="textInput w-full text-tiny"
+                    class="lowercaseInput w-full text-tiny"
                 />
                 <InputError :message="form.errors.email" />
             </div>
@@ -73,6 +73,7 @@ watch(
                 <input
                     v-model="form.phone"
                     :disabled="readonly"
+                    v-maska="'(##)#####-####'"
                     class="textInput w-full text-tiny"
                 />
                 <InputError :message="form.errors.phone" />
