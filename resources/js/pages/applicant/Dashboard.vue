@@ -22,6 +22,7 @@ type Request = {
     has_event: boolean
     status: string
     created_at: string
+    date: any
 }
 
 defineProps<{
@@ -73,13 +74,13 @@ const calendarOptions = {
         week: 'Semana',
         day: 'Dia',
     },
-    dateClick(info) {
+    dateClick(info: any) {
         selectedDate.value = info.dateStr
         showChoiceModal.value = true
     }
 }
 
-function eventContent(arg) {
+function eventContent(arg: any) {
     const view = arg.view.type
     const start = arg.start
 
@@ -116,7 +117,7 @@ function eventContent(arg) {
 /* Redirecionamentos */
 const goToEvent = () => {
     showChoiceModal.value = false
-    router.visit(route('request.create', {
+    router.visit(route('applicant.request.create', {
         date: selectedDate.value,
         start: selectedStartTime.value,
     }))
@@ -207,7 +208,7 @@ const goToEvent = () => {
                         </span>
 
                         <Link
-                            :href="route('request.show', r.id)"
+                            :href="route('applicant.request.show', r.id)"
                             class="block text-xs text-blue-600 hover:underline"
                         >
                             Visualizar

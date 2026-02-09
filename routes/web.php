@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MagicLinkController;
 #use App\Http\Controllers\ProfileController;
+use App\Models\RequestAttachment;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,7 +33,7 @@ Route::get('/calendar/events', [CalendarController::class, 'index'])
     ->name('calendar.events');
 
 Route::get('/attachments/{attachment}/download', function (
-    \App\Models\RequestAttachment $attachment
+    RequestAttachment $attachment
 ) {
     return response()->download(
         storage_path('app/public/' . $attachment->path),
@@ -45,8 +46,8 @@ Route::middleware(['auth', 'role:applicant'])
     ->group(function () {
         Route::resource('/dashboard', ApplicantDashboard::class)
             ->names('applicant.dashboard');
-
-        Route::resource('/request', ApplicantRequest::class);
+        Route::resource('/request', ApplicantRequest::class)
+            ->names('applicant.request');
     });
 
 Route::middleware(['auth', 'role:admin|directorship'])

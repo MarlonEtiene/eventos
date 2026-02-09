@@ -57,7 +57,7 @@ class RequestController extends Controller
         if ($date && $start) {
             $startDateTime = Carbon::createFromFormat(
                 'Y-m-d H:i',
-                "{$date} {$start}",
+                "$date $start",
                 'America/Sao_Paulo'
             );
 
@@ -107,7 +107,7 @@ class RequestController extends Controller
                 ->create($data);
 
             $user = Auth::user();
-            if(empty($user->name)) {
+            if(empty(trim($user->name))) {
                 $user->name = $data['name'];
                 $user->save();
             }

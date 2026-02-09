@@ -11,32 +11,31 @@ import CommunicationSection from "@/pages/applicant/Partials/CommunicationSectio
 const { nullableBoolean } = formatters();
 
 const page = usePage()
-const requestData = page.props.request_data
-const user = page.props.user
-const readOnly = page.props.read_only
+const requestData = page.props.request_data as any
+const user = page.props.user as any
+const readOnly = page.props.read_only as any
+const prefillStart = page.props.prefillStart as any
+const prefillEnd = page.props.prefillEnd as any
+const prefillDeliveryDate = page.props.prefillDeliveryDate as any
 
 onMounted(() => {
-    applyPrefill('start_at', page.props.prefillStart)
-    applyPrefill('end_at', page.props.prefillEnd)
-    applyPrefill('delivery_date', page.props.prefillDeliveryDate)
+    applyPrefill('start_at', prefillStart)
+    applyPrefill('end_at', prefillEnd)
+    applyPrefill('delivery_date', prefillDeliveryDate)
 });
 
 const step = ref(1)
-//const disabledSteps = ref<number[]>([])
 const flowResolved = ref(false)
 
 const disabledSteps = computed(() => {
-    // Ainda não decidiu se há evento
     if (form.has_event === null) {
         return [2, 3]
     }
 
-    // Decidiu que NÃO há evento
     if (form.has_event === false) {
         return [2]
     }
 
-    // Decidiu que HÁ evento
     return []
 })
 
@@ -128,8 +127,7 @@ const stepFields: Record<number, string[]> = {
 }
 
 const submitForm = () => {
-    console.log(form.data());
-    form.post(route('request.store'));
+    form.post(route('applicant.request.store'));
 }
 
 watch(

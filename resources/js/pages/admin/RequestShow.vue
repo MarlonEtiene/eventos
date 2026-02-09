@@ -14,7 +14,8 @@ const { nullableBoolean, translateStatus } = formatters();
 const { is } = useRoles();
 
 const page = usePage()
-const requestData = page.props.request_data
+const requestData = page.props.request_data as any;
+const user = page.props.user as any;
 
 const canDecide = computed(() => {
     if (is('directorship')) {
@@ -24,8 +25,6 @@ const canDecide = computed(() => {
     return is('admin') &&
         nullableBoolean(requestData?.has_communication) === true &&
         nullableBoolean(requestData?.has_event) === false;
-
-
 });
 
 const form = useForm({

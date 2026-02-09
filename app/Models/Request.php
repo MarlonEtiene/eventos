@@ -73,6 +73,6 @@ class Request extends Model implements Auditable
 
     public function commType(): BelongsTo
     {
-        return $this->belongsTo(CommunicationType::class);
+        return $this->belongsTo(CommunicationType::class, 'communication_type_id');
     }
 }
