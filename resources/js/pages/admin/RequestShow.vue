@@ -18,13 +18,7 @@ const requestData = page.props.request_data as any;
 const user = page.props.user as any;
 
 const canDecide = computed(() => {
-    if (is('directorship')) {
-        return true;
-    }
-
-    return is('admin') &&
-        nullableBoolean(requestData?.has_communication) === true &&
-        nullableBoolean(requestData?.has_event) === false;
+    return is('admin');
 });
 
 const form = useForm({

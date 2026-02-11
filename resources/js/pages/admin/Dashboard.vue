@@ -4,6 +4,8 @@ import StatCard from '@/components/StatCard.vue'
 import { Link, router } from '@inertiajs/vue3'
 import { formatters } from "@/composables/formatters";
 import SortableTh from '@/components/SortableTh.vue'
+import Pagination from "@/components/Pagination.vue";
+import {onMounted} from "vue";
 
 const { formatDate, translateStatus } = formatters();
 
@@ -73,12 +75,17 @@ function sortBy(column: string) {
     )
 }
 
+onMounted(() => {
+    console.log(props.requests);
+});
+
 </script>
 
 <template>
     <AdminLayout>
 
         <!-- Cards -->
+        <!-- Transformar cards em botões clicáveis, com ação de filtro -->
         <div class="grid grid-cols-4 gap-6 mb-10">
             <StatCard label="Novas" :value="stats.sended" />
             <StatCard label="Aprovadas" :value="stats.approved" />
@@ -87,7 +94,7 @@ function sortBy(column: string) {
         </div>
 
         <!-- Filtros -->
-        <div class="bg-white rounded-xl shadow mb-6 px-6 py-4 flex gap-4 items-center">
+<!--        <div class="bg-white rounded-xl shadow mb-6 px-6 py-4 flex gap-4 items-center">
             <select
                 class="border rounded-lg pl-3 pr-10 py-2 text-sm min-w-[150px]
                 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -99,7 +106,7 @@ function sortBy(column: string) {
                 <option value="approved">Aprovadas</option>
                 <option value="rejected">Reprovadas</option>
             </select>
-        </div>
+        </div>-->
 
         <!-- Tabela -->
         <section class="bg-white rounded-xl shadow">
@@ -192,31 +199,7 @@ function sortBy(column: string) {
                 </tr>
                 </tbody>
             </table>
-
-            <div
-                v-if="requests.last_page > 1"
-                class="flex justify-between items-center px-6 py-4 border-t text-sm"
-            >
-                <span class="text-slate-500">
-                    Página {{ requests.current_page }} de {{ requests.last_page }}
-                </span>
-
-                <div class="flex gap-2">
-                    <button
-                        v-for="link in requests.links"
-                        :key="link.label"
-                        v-html="link.label"
-                        :disabled="!link.url"
-                        @click="link.url && router.get(link.url, {}, { preserveState: true })"
-                        class="px-3 py-1 rounded border text-sm"
-                        :class="[
-                            link.active
-                                ? 'bg-blue-600 text-white border-blue-600'
-                                : 'bg-white hover:bg-slate-100', !link.url && 'opacity-40 cursor-not-allowed'
-                                ]"
-                    />
-                </div>
-            </div>
+            <Pagination :links="requests.links" />
         </section>
 
     </AdminLayout>

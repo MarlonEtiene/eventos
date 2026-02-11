@@ -56,7 +56,7 @@ const submitRequester = () => {
         />
 
         <!-- Card -->
-        <div class="flex-1 flex items-center justify-center px-4">
+        <div class="flex items-center justify-center px-4 py-16">
             <div class="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6 space-y-6">
 
                 <!-- Tabs -->
@@ -168,13 +168,12 @@ const submitRequester = () => {
         </div>
 
         <!-- Rodapé -->
-        <div class="text-center mt-1">
-            <span class="text-sm font-semibold text-sky-800 tracking-wide">e-Eventos</span>
+        <footer class="mt-8 pb-6 text-center">
+            <span class="text-base font-semibold text-sky-800 tracking-wide">e-Eventos</span>
             <img src="/images/logo-eei.png"
                  alt="Viva Rio Logo"
-                 class="h-10 mt-1 block mx-auto" />
-        </div>
-
+                 class="h-14 mt-1 block mx-auto" />
+        </footer>
     </div>
 </template>
 
