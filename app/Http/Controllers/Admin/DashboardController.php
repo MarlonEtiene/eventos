@@ -19,6 +19,8 @@ class DashboardController extends Controller
             $query->where('status', $httpRequest->status);
         }
 
+        \DB::connection('sqlsrv')->query('SELECT 1')->;
+
         // 🔹 Ordenação
         $sortBy = $httpRequest->get('sort_by', 'created_at');
         $sortDir = $httpRequest->get('sort_dir', 'desc');
@@ -41,10 +43,10 @@ class DashboardController extends Controller
 
         return Inertia::render('admin/Dashboard', [
             'stats' => [
-                'sended'   => Request::where('status', 'sended')->count(),
-                'approved' => Request::where('status', 'approved')->count(),
-                'rejected' => Request::where('status', 'rejected')->count(),
-                'total'    => Request::count(),
+                'sended'   => Request::query()->where('status', 'sended')->count(),
+                'approved' => Request::query()->where('status', 'approved')->count(),
+                'rejected' => Request::query()->where('status', 'rejected')->count(),
+                'total'    => Request::query()->count(),
             ],
             'requests' => $requests,
             'filters' => [

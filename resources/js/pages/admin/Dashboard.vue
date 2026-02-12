@@ -5,7 +5,7 @@ import { Link, router } from '@inertiajs/vue3'
 import { formatters } from "@/composables/formatters";
 import SortableTh from '@/components/SortableTh.vue'
 import Pagination from "@/components/Pagination.vue";
-import {onMounted} from "vue";
+import { onMounted, computed } from "vue";
 
 const { formatDate, translateStatus } = formatters();
 
@@ -23,6 +23,8 @@ const props = defineProps<{
         sort_dir: 'asc' | 'desc'
     }
 }>()
+
+const activeStatus = computed(() => props.filters.status ?? null)
 
 function applyFilters(params: Record<string, any>) {
     router.get(route('admin.dashboard.index'), {
@@ -83,30 +85,30 @@ onMounted(() => {
 
 <template>
     <AdminLayout>
-
-        <!-- Cards -->
-        <!-- Transformar cards em botões clicáveis, com ação de filtro -->
+        <!-- Cards Filters -->
         <div class="grid grid-cols-4 gap-6 mb-10">
-            <StatCard label="Novas" :value="stats.sended" />
-            <StatCard label="Aprovadas" :value="stats.approved" />
-            <StatCard label="Reprovadas" :value="stats.rejected" />
-            <StatCard label="Total" :value="stats.total" />
+            <StatCard
+                label="Novas"
+                :value="stats.sended"
+                :active="activeStatus === 'sended'"
+                @click="applyFilters({ status: 'sended' })"
+            />
+            <StatCard
+                label="Aprovadas"
+                :value="stats.approved"
+                :active="activeStatus === 'approved'"
+                @click="applyFilters({ status: 'approved' })" />
+            <StatCard
+                label="Reprovadas"
+                :value="stats.rejected"
+                :active="activeStatus === 'rejected'"
+                @click="applyFilters({ status: 'rejected' })" />
+            <StatCard
+                label="Total"
+                :value="stats.total"
+                :active="activeStatus === null"
+                @click="applyFilters({ status: null })" />
         </div>
-
-        <!-- Filtros -->
-<!--        <div class="bg-white rounded-xl shadow mb-6 px-6 py-4 flex gap-4 items-center">
-            <select
-                class="border rounded-lg pl-3 pr-10 py-2 text-sm min-w-[150px]
-                focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :value="filters.status ?? ''"
-                @change="applyFilters({ status: $event.target.value || null })"
-            >
-                <option value="">Todos os status</option>
-                <option value="sended">Enviadas</option>
-                <option value="approved">Aprovadas</option>
-                <option value="rejected">Reprovadas</option>
-            </select>
-        </div>-->
 
         <!-- Tabela -->
         <section class="bg-white rounded-xl shadow">

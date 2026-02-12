@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { Head, Link, router } from '@inertiajs/vue3'
 import InstitutionalHeader from '@/pages/partials/InstitutionalHeader.vue'
-import {formatters} from "@/composables/formatters";
+import {formatters} from "@/composables/formatters"
 
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -17,9 +17,10 @@ type Request = {
     email: string
     function: string
     sector: string
-    type: 'event' | 'communication'
+
     title: string
     has_event: boolean
+    has_communication: boolean
     status: string
     created_at: string
     date: any
@@ -43,6 +44,30 @@ const statusMap: Record<string, string> = {
     approved: 'bg-green-100 text-green-800',
     rejected: 'bg-red-100 text-red-800',
     pending_directorship: 'bg-yellow-100 text-yellow-800',
+}
+
+function typeIcon(item: any) {
+    if (item.has_event && item.has_communication) {
+        return {
+            icons: ['🗓️', '📣'],
+            label: 'Evento + Comunicação',
+            type: 'EC',
+        }
+    }
+
+    if (item.has_event) {
+        return {
+            icons: ['🗓️'],
+            label: 'Evento',
+            type: 'E',
+        }
+    }
+
+    return {
+        icons: ['📣'],
+        label: 'Comunicação',
+        type: 'C',
+    }
 }
 
 const isMobile = window.matchMedia('(max-width: 640px)').matches
@@ -169,12 +194,27 @@ const goToEvent = () => {
                 >
                     <div class="space-y-1">
                         <!-- Tipo -->
-                        <span
+<!--                        <span
                             class="inline-block text-xs font-semibold px-2 py-1 rounded"
-                            :class="r.type === 'event' ? 'bg-indigo-100 text-indigo-800' : 'bg-emerald-100 text-emerald-800'"
+                            :class="typeIcon(r).type === 'E' ? 'bg-indigo-100 text-indigo-800' : typeIcon(r).type === 'C' ? 'bg-emerald-100 text-emerald-800' : 'bg-orange-100 text-orange-800' "
                         >
-                            {{ r.type === 'event' ? 'Evento' : 'Comunicação' }}
-                        </span>
+                            {{ typeIcon(r).label }}
+                        </span>-->
+
+                        <div
+                            class="flex items-center gap-1 text-lg"
+                            :title="typeIcon(r).label"
+                        >
+                            <span v-for="(icon, i) in typeIcon(r).icons" :key="i">
+                                {{ icon }}
+                            </span>
+                            <span
+                                class="inline-block text-base font-semibold px-2 py-1 rounded"
+                                :class="typeIcon(r).type === 'E' ? 'bg-indigo-100 text-indigo-800' : typeIcon(r).type === 'C' ? 'bg-emerald-100 text-emerald-800' : 'bg-orange-100 text-orange-800' "
+                            >
+                                {{ typeIcon(r).label }}
+                            </span>
+                        </div>
 
                         <!-- Título -->
                         <p class="text-sm font-medium text-slate-800 leading-snug">
@@ -266,6 +306,12 @@ const goToEvent = () => {
                 </button>
             </div>
         </div>
+        <footer class="mt-2 pb-6 text-center">
+            <span class="text-base font-semibold text-sky-800 tracking-wide">e-Eventos</span>
+            <img src="/images/logo-eei.png"
+                 alt="Viva Rio Logo"
+                 class="h-14 mt-1 block mx-auto" />
+        </footer>
     </div>
 </template>
 

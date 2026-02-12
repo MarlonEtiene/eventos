@@ -9,12 +9,6 @@ import { Head } from '@inertiajs/vue3'
         <!-- Header -->
         <header class="bg-sky-100 border-b">
             <div class="max-w-7xl mx-auto px-6 py-6 text-center">
-                <img
-                    src="/images/logo-eei.png"
-                    class="h-12 mx-auto mb-2"
-                    alt="Logo"
-                />
-
                 <h1 class="text-xl font-semibold text-slate-800">
                     Solicitações
                 </h1>
@@ -29,5 +23,11 @@ import { Head } from '@inertiajs/vue3'
         <main class="max-w-7xl mx-auto px-6 py-8">
             <slot />
         </main>
+        <footer class="mt-2 pb-6 text-center">
+            <span class="text-base font-semibold text-sky-800 tracking-wide">e-Eventos</span>
+            <img src="/images/logo-eei.png"
+                 alt="Viva Rio Logo"
+                 class="h-14 mt-1 block mx-auto" />
+        </footer>
     </div>
 </template>

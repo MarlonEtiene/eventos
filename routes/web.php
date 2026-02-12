@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\RequestController as AdminRequest;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\MagicLinkController;
-#use App\Http\Controllers\ProfileController;
 use App\Models\RequestAttachment;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;

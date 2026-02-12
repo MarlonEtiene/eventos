@@ -23,6 +23,7 @@ class DashboardController extends Controller
                 'status',
                 'created_at',
                 'has_event',
+                'has_communication',
                 'title',
                 'start_at',
                 'delivery_date',
@@ -37,8 +38,8 @@ class DashboardController extends Controller
                     'function' => $request->function,
                     'status' => $request->status,
                     'created_at' => $request->created_at,
-                    'type' => $request->has_event ? 'event' : 'communication',
                     'has_event' => $request->has_event,
+                    'has_communication' => $request->has_communication,
                     'title' => $request->has_event
                         ? $request->title
                         : 'Solicitação de Comunicação',
@@ -48,6 +49,7 @@ class DashboardController extends Controller
                         : $request->delivery_date,
                 ];
             });
+
         return Inertia::render('applicant/Dashboard', [
             'requests' => $requests,
         ]);
